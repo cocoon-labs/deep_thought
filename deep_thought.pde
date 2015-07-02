@@ -26,41 +26,14 @@ import com.philips.lighting.hue.sdk.heartbeat.*;
 
 import processing.serial.*;
 import cc.arduino.*;
+
 Arduino arduino;
-
-int SWITCH1 = 22;
-int SWITCH2 = 24;
-int SWITCH3 = 26;
-int SWITCH4 = 28;
-// int SWITCH5 = 30;
-
-// For this orientation, down is the direction of the headers
-int JS_UP = 32;
-int JS_DOWN = 34;
-int JS_LEFT = 36;
-int JS_RIGHT = 38;
-
-int s1_state = Arduino.LOW;
-int s2_state = Arduino.LOW;
-int s3_state = Arduino.LOW;
-int s4_state = Arduino.LOW;
-// int s5_state = Arduino.LOW;
-
-int ju_state = Arduino.LOW;
-int jd_state = Arduino.LOW;
-int jl_state = Arduino.LOW;
-int jr_state = Arduino.LOW;
-
-int s1_reading = Arduino.LOW;
-int s2_reading = Arduino.LOW;
-int s3_reading = Arduino.LOW;
-int s4_reading = Arduino.LOW;
-// int s5_reading = Arduino.LOW;
-
-int ju_reading = Arduino.LOW;
-int jd_reading = Arduino.LOW;
-int jl_reading = Arduino.LOW;
-int jr_reading = Arduino.LOW;
+Toggle[] toggles;
+Joystick[] joysticks;
+Pot[] pots;
+Fader[] faders;
+Pulse pulse;
+Proximity prox;
 
 boolean changed = false;
 
@@ -85,105 +58,90 @@ void setup() {
     println(Arduino.list());
     arduino = new Arduino (this, Arduino.list()[0], 57600);
 
-    arduino.pinMode(SWITCH1, Arduino.INPUT);
-    arduino.pinMode(SWITCH2, Arduino.INPUT);
-    arduino.pinMode(SWITCH3, Arduino.INPUT);
-    arduino.pinMode(SWITCH4, Arduino.INPUT);
-    // arduino.pinMode(SWITCH5, Arduino.INPUT);
+    toggles = new Toggle[] {
+      Toggle(22), Toggle(24), Toggle(26),
+      Toggle(28), Toggle(30)
+    };
 
-    arduino.pinMode(JS_UP, Arduino.INPUT);
-    arduino.pinMode(JS_DOWN, Arduino.INPUT);
-    arduino.pinMode(JS_LEFT, Arduino.INPUT);
-    arduino.pinMode(JS_RIGHT, Arduino.INPUT);
-    arduino.digitalWrite(JS_UP, Arduino.HIGH);
-    arduino.digitalWrite(JS_DOWN, Arduino.HIGH);
-    arduino.digitalWrite(JS_LEFT, Arduino.HIGH);
-    arduino.digitalWrite(JS_RIGHT, Arduino.HIGH);
+    joysticks = new Joystick[] {
+      Joystick(32, 35, 36, 38), JoyStick(40, 42, 46, 48),
+      Joystick(31, 33, 35, 37), JoyStick(39, 41, 43, 45),
+      Joystick(47, 49, 51, 53)
+    };
 
+    pots = new Pot[] {
+      Pot(0), Pot(1), Pot(2), Pot(3), Pot(4),
+      Pot(5), Pot(6), Pot(7), Pot(8), Pot(9)
+    };
+
+    faders = new Fader[] {
+      Fader(10), Fader(11), Fader(12), Fader(13), Fader(14)
+    };
+
+    pulse = new Pulse(15);
+    prox = new Proximity(49);
 }
 
 void draw () {
 
-    s1_reading = arduino.digitalRead(SWITCH1);
-    s2_reading = arduino.digitalRead(SWITCH2);
-    s3_reading = arduino.digitalRead(SWITCH3);
-    s4_reading = arduino.digitalRead(SWITCH4);
-    // s5_reading = arduino.digitalRead(SWITCH5);
+  PHLightState lightOneState = new PHLightState();
+  PHLightState lightTwoState = new PHLightState();
 
-    ju_reading = arduino.digitalRead(JS_UP);
-    jd_reading = arduino.digitalRead(JS_DOWN);
-    jl_reading = arduino.digitalRead(JS_LEFT);
-    jr_reading = arduino.digitalRead(JS_RIGHT);
+  // if (canDraw && switches_changed()) {
+  //   // cycle through some hues for the two connected lights.
+  //   js_hue = hues[t3_reading];
+  //   // js_bright = brightnesses[t5_reading];
+  //   lightOneState.setOn((t1_reading == 1) ? true : false);
+  //   lightTwoState.setOn((t2_reading == 1) ? true : false);
+  // }
 
-    PHLightState lightOneState = new PHLightState();
-    PHLightState lightTwoState = new PHLightState();
+  // if (canDraw && joystick_engaged() && (millis() - time > debounce)) {
+  //   if (ju_reading == Arduino.LOW) {
+	//     println("increment bright");
+	//     js_bright += 16;
+  //   } else if (jd_reading == Arduino.LOW) {
+	//     js_bright -= 16;
+  //   }
 
-    if (canDraw && switches_changed()) {
-        // cycle through some hues for the two connected lights.
-	js_hue = hues[s3_reading];
-	// js_bright = brightnesses[s5_reading];
-        lightOneState.setOn((s1_reading == 1) ? true : false);
-        lightTwoState.setOn((s2_reading == 1) ? true : false);
-    }
+  //   if (jl_reading == Arduino.LOW) {
+	//     js_hue -= 1000;
+  //   } else if (jr_reading == Arduino.LOW) {
+	//     js_hue += 1000;
+  //   }
 
-    if (canDraw && joystick_engaged() && (millis() - time > debounce)) {
-	if (ju_reading == Arduino.LOW) {
-	    println("increment bright");
-	    js_bright += 16;
-	} else if (jd_reading == Arduino.LOW) {
-	    js_bright -= 16;
-	}
+  //   js_bright = constrain(js_bright, 0, 255);
 
-	if (jl_reading == Arduino.LOW) {
-	    js_hue -= 1000;
-	} else if (jr_reading == Arduino.LOW) {
-	    js_hue += 1000;
-	}
-
-	js_bright = constrain(js_bright, 0, 255);
-
-	js_hue = constrain(js_hue, 0, 50000);
-	// println(ju_reading + " : " + jd_reading + " : " + jl_reading + " : " + jr_reading);
+  //   js_hue = constrain(js_hue, 0, 50000);
+  //   // println(ju_reading + " : " + jd_reading + " : " + jl_reading + " : " + jr_reading);
 	
-    }
+  // }
 
-    if (canDraw && check_for_change() && (millis() - time > debounce)) {
-	lightOneState.setBrightness(js_bright);
-	lightTwoState.setBrightness(js_bright);
+  // if (canDraw && check_for_change() && (millis() - time > debounce)) {
+  //   lightOneState.setBrightness(js_bright);
+  //   lightTwoState.setBrightness(js_bright);
 
-	lightOneState.setHue(js_hue);
-	lightTwoState.setHue(js_hue);
+  //   lightOneState.setHue(js_hue);
+  //   lightTwoState.setHue(js_hue);
 
-        ctrl.updateLight(0, lightOneState);
-        ctrl.updateLight(1, lightTwoState);
+  //   ctrl.updateLight(0, lightOneState);
+  //   ctrl.updateLight(1, lightTwoState);
 
-	time = millis();
-    }
-
-    s1_state = s1_reading;
-    s2_state = s2_reading;
-    s3_state = s3_reading;
-    s4_state = s4_reading;
-    // s5_state = s5_reading;
-
-    ju_state = ju_reading;
-    jd_state = jd_reading;
-    jl_state = jl_reading;
-    jr_state = jr_reading;
+  //   time = millis();
+  // }
 
 }
 
-boolean check_for_change() {
-    return switches_changed() || joystick_engaged();
-}
+// boolean check_for_change() {
+//   return switches_changed() || joystick_engaged();
+// }
 
-boolean joystick_engaged() {
-    return ju_reading == Arduino.LOW || jd_reading == Arduino.LOW || 
-	jl_reading == Arduino.LOW || jr_reading == Arduino.LOW;
-}
+// boolean joystick_engaged() {
+//   return ju_reading == Arduino.LOW || jd_reading == Arduino.LOW || 
+//     jl_reading == Arduino.LOW || jr_reading == Arduino.LOW;
+// }
 
-boolean switches_changed() {
-    return s1_reading != s1_state || s2_reading != s2_state ||
-        s3_reading != s3_state || s4_reading != s4_state;
-        // s5_reading != s5_state;
-}
+// boolean switches_changed() {
+//   return t1_reading != t1_state || t2_reading != t2_state ||
+//     t3_reading != t3_state || t4_reading != t4_state;
+//   // t5_reading != t5_state;
+// }
