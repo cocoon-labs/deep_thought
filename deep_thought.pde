@@ -27,6 +27,9 @@ import com.philips.lighting.hue.sdk.heartbeat.*;
 import processing.serial.*;
 import cc.arduino.*;
 
+import oscP5.*;
+import netP5.*;
+
 Arduino arduino;
 Toggle[] toggles;
 Joystick[] joysticks;
@@ -50,13 +53,24 @@ int[] brightnesses = new int[] {0, 128};
 int js_bright = brightnesses[0];
 int js_hue = hues[0];
 
+// OSC Stuff
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+NetAddressList myNetAddressList = new NetAddressList();
+int myListeningPort = 5001;
+int myBroadcastPort = 12000;
+
 void setup() {
     time = millis();
     ctrl = new Controller();
     // TODO: maybe set up the heartbeat if it seems relevant.
 
     println(Arduino.list());
-    arduino = new Arduino (this, Arduino.list()[2], 57600);
+    // for raspi
+    arduino = new Arduino (this, Arduino.list()[0], 57600);
+
+    // for macbook
+    // arduino = new Arduino (this, Arduino.list()[2], 57600);
 
     toggles = new Toggle[] {
       new Toggle(22), new Toggle(24), new Toggle(26),
@@ -80,12 +94,26 @@ void setup() {
 
     pulse = new Pulse(15);
     prox = new Proximity(49);
+
+    // This causes firmata to wake up, for some reason. Needed for PI.
+    arduino.pinMode(13, Arduino.OUTPUT);
+
+    oscP5 = new OscP5(this, myListeningPort);
+
+    // set the remote location to be the dt_matrix raspberry pi
+    myRemoteLocation = new NetAddress("192.168.2.122", 5005);
 }
 
 void draw () {
 
   PHLightState lightOneState = new PHLightState();
   PHLightState lightTwoState = new PHLightState();
+  
+//   if (millis() - time > debounce) {
+//   int next = val == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+//   arduino.digitalWrite(13, next);
+//   val = next;
+// }
 
   if (canDraw && (millis() - time > debounce) && pots[0].recordState()) {
     int bright = (int) map(pots[0].getState(), 0, 1023, 0, 255);
@@ -94,6 +122,8 @@ void draw () {
 
     ctrl.updateLight(0, lightOneState);
     ctrl.updateLight(1, lightTwoState);
+    
+    tellThem();
     time = millis();
   }
 
@@ -154,4 +184,18 @@ void draw () {
 //   return t1_reading != t1_state || t2_reading != t2_state ||
 //     t3_reading != t3_state || t4_reading != t4_state;
 //   // t5_reading != t5_state;
+// }
+
+void tellThem() {
+    print("sending osc");
+    OscMessage message;
+    message = new OscMessage("/pot/0");
+    message.add(pots[0].getState());
+    oscP5.send(message, myRemoteLocation);
+}
+
+// void stop() {
+//     OscMessage message;
+//     message = new OscMessage("/quit");
+//     oscP5.send(message, myRemoteLocation);
 // }
