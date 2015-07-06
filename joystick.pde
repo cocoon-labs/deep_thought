@@ -4,11 +4,10 @@ public class Joystick {
   public int UL = 5, UR = 6, DL = 7, DR = 8;
 
   private int[] dataPins;
-  private int[] states;
-  private int[] readings;
+  private int[] state;
+  private int[] reading;
 
   public Joystick(int up, int down, int left, int right) {
-    digital = true;
     
     arduino.pinMode(up, Arduino.INPUT);
     arduino.pinMode(down, Arduino.INPUT);
@@ -42,8 +41,8 @@ public class Joystick {
     return tmp == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
   }
 
-  int getDir() {
-    result = C;
+  public int getDirection() {
+    int result = C;
     if (getState(U) == Arduino.HIGH && getState(L) == Arduino.HIGH) {
       result = UL;
     } else if (getState(U) == Arduino.HIGH && getState(R) == Arduino.HIGH) {

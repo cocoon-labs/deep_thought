@@ -56,26 +56,26 @@ void setup() {
     // TODO: maybe set up the heartbeat if it seems relevant.
 
     println(Arduino.list());
-    arduino = new Arduino (this, Arduino.list()[0], 57600);
+    arduino = new Arduino (this, Arduino.list()[2], 57600);
 
     toggles = new Toggle[] {
-      Toggle(22), Toggle(24), Toggle(26),
-      Toggle(28), Toggle(30)
+      new Toggle(22), new Toggle(24), new Toggle(26),
+      new Toggle(28), new Toggle(30)
     };
 
     joysticks = new Joystick[] {
-      Joystick(32, 35, 36, 38), JoyStick(40, 42, 46, 48),
-      Joystick(31, 33, 35, 37), JoyStick(39, 41, 43, 45),
-      Joystick(47, 49, 51, 53)
+      new Joystick(32, 35, 36, 38), new Joystick(40, 42, 46, 48),
+      new Joystick(31, 33, 35, 37), new Joystick(39, 41, 43, 45),
+      new Joystick(47, 49, 51, 53)
     };
 
     pots = new Pot[] {
-      Pot(0), Pot(1), Pot(2), Pot(3), Pot(4),
-      Pot(5), Pot(6), Pot(7), Pot(8), Pot(9)
+      new Pot(0), new Pot(1), new Pot(2), new Pot(3), new Pot(4),
+      new Pot(5), new Pot(6), new Pot(7), new Pot(8), new Pot(9)
     };
 
     faders = new Fader[] {
-      Fader(10), Fader(11), Fader(12), Fader(13), Fader(14)
+      new Fader(10), new Fader(11), new Fader(12), new Fader(13), new Fader(14)
     };
 
     pulse = new Pulse(15);
@@ -86,6 +86,16 @@ void draw () {
 
   PHLightState lightOneState = new PHLightState();
   PHLightState lightTwoState = new PHLightState();
+
+  if (canDraw && (millis() - time > debounce) && pots[0].recordState()) {
+    int bright = (int) map(pots[0].getState(), 0, 1023, 0, 255);
+    lightOneState.setBrightness(bright);
+    lightTwoState.setBrightness(bright);
+
+    ctrl.updateLight(0, lightOneState);
+    ctrl.updateLight(1, lightTwoState);
+    time = millis();
+  }
 
   // if (canDraw && switches_changed()) {
   //   // cycle through some hues for the two connected lights.

@@ -1,8 +1,7 @@
-public class Toggle extends {
+public class Toggle extends InputDevice {
 
   public Toggle(int pin) {
-    digital = true;
-    super(pin);
+    super(pin, true);
   }
 
 }

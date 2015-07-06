@@ -3,9 +3,10 @@ public abstract class InputDevice {
   protected int dataPin;
   protected int state;
   protected int reading;
-  protected boolean digital = false;
+  protected boolean digital;
 
-  public InputDevice(int pin) {
+  public InputDevice(int pin, boolean digital) {
+    this.digital = digital;
     arduino.pinMode(pin, Arduino.INPUT);
     dataPin = pin;
     recordState();
@@ -26,3 +27,4 @@ public abstract class InputDevice {
   public int getState() {
     return state;
   }
+}

@@ -1,5 +1,5 @@
 public class Controller {
-  String bridgeIP = "192.168.1.200";
+  String bridgeIP = "192.168.2.200";
   String bridgeUname = "newdeveloper";
   PHHueSDK phHueSDK = PHHueSDK.getInstance();
   PHAccessPoint accessPoint = new PHAccessPoint();
