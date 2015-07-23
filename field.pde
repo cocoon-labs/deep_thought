@@ -14,12 +14,15 @@ class Field {
     nHybys = 2;
     hybys = new Hyby[nHybys];
     wheel = new ColorWheel();
-    for (int i = 0; i < nHybys; i++) {
-      hybys[i] = new Hyby(i, ctrl, wheel, i * 2, i * 2 + 1);
-    }
-    dt = new DeepThought();
+    wheel.setPreset(7);
 
-    modes[0] = new RotateColors(hybys, dt, wheel, 0.99, chance);
+    for (int i = 0; i < nHybys; i++) {
+      hybys[i] = new Hyby(i, ctrl, wheel, new int[] {i * 2, i * 2 + 1});
+    }
+
+    dt = new DeepThought(ctrl, wheel);
+
+    modes[0] = new GradientWipe(hybys, dt, wheel, 0.99, chance);
   }
 
   public void send() {
