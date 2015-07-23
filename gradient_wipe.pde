@@ -1,6 +1,6 @@
-public class RotateColors extends Mode {
+public class GradientWipe extends Mode {
 
-  public RotateColors(Hyby[] hybys, DeepThought dt, ColorWheel wheel, float fadeFactor, int chance) {
+  public GradientWipe(Hyby[] hybys, DeepThought dt, ColorWheel wheel, float fadeFactor, int chance) {
     super(hybys, dt, wheel, fadeFactor, chance);
   }
 
