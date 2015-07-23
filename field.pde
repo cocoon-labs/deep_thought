@@ -11,11 +11,11 @@ class Field {
 
   Field(int chance, Controller ctrl) {
     this.ctrl = ctrl;
-    nHybys = 1;
+    nHybys = 2;
     hybys = new Hyby[nHybys];
     wheel = new ColorWheel();
     for (int i = 0; i < nHybys; i++) {
-      hybys[i] = new Hyby(i, ctrl, wheel, 0, 1);
+      hybys[i] = new Hyby(i, ctrl, wheel, i * 2, i * 2 + 1);
     }
     dt = new DeepThought();
 

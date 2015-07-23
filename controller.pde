@@ -34,6 +34,12 @@ public class Controller {
             bridge = phHueSDK.getSelectedBridge();
             cache = bridge.getResourceCache();
             allLights = cache.getAllLights();
+            Collections.sort(allLights, new Comparator<PHLight>() {
+                public int compare(PHLight o1, PHLight o2) {
+                  return o1.getIdentifier().compareTo(o2.getIdentifier());
+                }
+              });
+
             canDraw = true;
             // Here it is recommended to set your connected bridge in your sdk object (as above) and start the heartbeat.
             // At this point you are connected to a bridge so you should pass control to your main program/activity.

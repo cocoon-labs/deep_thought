@@ -1,4 +1,6 @@
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.philips.lighting.hue.sdk.utilities.impl.*;
 import org.json.hue.*;
@@ -50,7 +52,7 @@ int T_ARCADE = 3;
 int T_DEST = 4;
 
 int time = 0;
-int debounce = 5000;
+int debounce = 1000;
 
 boolean isOn = false;
 boolean canDraw = false;
