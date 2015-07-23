@@ -32,11 +32,51 @@ class ColorWheel {
     wheelPos = (wheelPos + step) % nColors;
   }
   
-  // Returns HUE-based color value
-  int getColor(int offset) {
-    return 0;
+  // Returns HUE-based color value (XY form)
+  float[] getColor(int offset, int brightness) {
+    return getColor(offset, brightness, scheme);
   }
-  
+
+  float[] getColor(int offset, int brightness, int[][] colors) {
+    int schemeN = colors.length;
+    int dist = 255 / schemeN;
+    int[] c = new int[3];
+    int position = (wheelPos + offset) % nColors;
+    
+    for (int i = 0; i < schemeN; i++) {
+      if (position < (i + 1) * dist) {
+        c = genColor(position, i, colors, dist);
+        c = applyBrightness(c, brightness);
+        return getRGBtoXY(c);
+      }
+    }
+    c = genColor(position, schemeN - 1, colors, dist);
+    c = applyBrightness(c, brightness);
+    return getRGBtoXY(c);
+  }
+
+  private int[] genColor(int position, int idx, int[][] colors, int dist) {
+    position = position - (idx * dist);
+    int schemeN = colors.length;
+    int[] result = new int[3];
+    for (int i = 0; i < 3; i++) {
+      result[i] = 
+        colors[idx][i] + 
+          (position * 
+            (colors[(idx+1) % schemeN][i] - colors[idx][i]) / 
+            dist);
+    }
+    return result;
+  }
+
+  public int[] applyBrightness(int[] c, int brightness) {
+    int[] newC = new int[3];
+    newC[0] = int(map(brightness, 0, 255, 0, c[0]));
+    newC[1] = int(map(brightness, 0, 255, 0, c[1]));
+    newC[2] = int(map(brightness, 0, 255, 0, c[2]));
+    return newC;
+  }
+
   void newScheme() {
     // GENERATE NEW SCHEME SOMEHOW
   }
@@ -48,5 +88,56 @@ class ColorWheel {
     scheme[2] = presets[preset][2];
     */
   }
-  
+
+  private float[] getRGBtoXY(int[] c) {
+    // For the hue bulb the corners of the triangle are:
+    // -Red: 0.675, 0.322
+    // -Green: 0.4091, 0.518
+    // -Blue: 0.167, 0.04
+    float[] normalizedToOne = new float[3];
+    float cred, cgreen, cblue;
+    cred = (float) c[0];
+    cgreen = (float) c[1];
+    cblue = (float) c[2];
+    normalizedToOne[0] = (cred / 255);
+    normalizedToOne[1] = (cgreen / 255);
+    normalizedToOne[2] = (cblue / 255);
+    float red, green, blue;
+
+    // Make red more vivid
+    if (normalizedToOne[0] > 0.04045) {
+      red = (float) Math.pow((normalizedToOne[0] + 0.055) / (1.0 + 0.055), 2.4);
+                             
+    } else {
+      red = (float) (normalizedToOne[0] / 12.92);
+    }
+
+    // Make green more vivid
+    if (normalizedToOne[1] > 0.04045) {
+      green = (float) Math.pow((normalizedToOne[1] + 0.055)
+                               / (1.0 + 0.055), 2.4);
+    } else {
+      green = (float) (normalizedToOne[1] / 12.92);
+    }
+
+    // Make blue more vivid
+    if (normalizedToOne[2] > 0.04045) {
+      blue = (float) Math.pow((normalizedToOne[2] + 0.055)
+                              / (1.0 + 0.055), 2.4);
+    } else {
+      blue = (float) (normalizedToOne[2] / 12.92);
+    }
+
+    float X = (float) (red * 0.649926 + green * 0.103455 + blue * 0.197109);
+    float Y = (float) (red * 0.234327 + green * 0.743075 + blue * 0.022598);
+    float Z = (float) (red * 0.0000000 + green * 0.053077 + blue * 1.035763);
+
+    float x = X / (X + Y + Z);
+    float y = Y / (X + Y + Z);
+
+    float[] xy = new float[2];
+    xy[0] = x;
+    xy[1] = y;
+    return xy;
+  }
 }

@@ -1,0 +1,5 @@
+class DeepThought {
+  
+  public DeepThought() {
+  }
+}

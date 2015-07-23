@@ -40,6 +40,7 @@ Pulse pulse;
 Proximity prox;
 
 boolean changed = false;
+int globalBrightness = 0;
 
 // Toggle references
 int T_PRESETS = 0;
@@ -49,13 +50,14 @@ int T_ARCADE = 3;
 int T_DEST = 4;
 
 int time = 0;
-int debounce = 200;
+int debounce = 5000;
 
 boolean isOn = false;
 boolean canDraw = false;
 int hue = 100;
 int bri = 0;
 Controller ctrl;
+Field field;
 int[] hues = new int[] {2000, 50000};
 int[] brightnesses = new int[] {0, 128};
 int js_bright = brightnesses[0];
@@ -67,11 +69,13 @@ int js_hue = hues[0];
 // modes[mode] = actual lighting mode currently selected
 // modeOptions[mode] = how many specific options to display on Trellis for given mode
 // ... then lighting modes. CIRCLE is just an example name, i.e. circles through wheel.
-int nModes = 0;
-int mode = CIRCLE;
-Mode[] modes = new Modes[nModes];
+// int nModes = 0;
+// int mode = CIRCLE;
+// Mode[] modes = new Modes[nModes];
 int[] modeOptions = new int[] {5}; // 5 is just a place holder for now
-int CIRCLE = 0;
+// int CIRCLE = 0;
+int nColorPresets = 0;
+int nModePresets = 0;
 
 ColorWheel wheel = new ColorWheel();
 
@@ -94,8 +98,8 @@ void setup() {
     println(Serial.list());
     // THIS WILL PROBABLY HAVE TO BE MODIFIED
     // TO CONNECT WITH THE RIGHT SERIAL PORT
-    Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
-    trellis = new Trellis(trellisPort);
+    // Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
+    // trellis = new Trellis(trellisPort);
 
     // for macbook
     // arduino = new Arduino (this, Arduino.list()[2], 57600);
@@ -131,13 +135,16 @@ void setup() {
     // set the remote location to be the dt_matrix raspberry pi
     myRemoteLocation = new NetAddress("192.168.2.122", 5005);
     
-    trellis.updateMode();
+    // trellis.updateMode();
+
+    field = new Field(500, ctrl);
+    
 }
 
 void draw () {
 
-  PHLightState lightOneState = new PHLightState();
-  PHLightState lightTwoState = new PHLightState();
+  // PHLightState lightOneState = new PHLightState();
+  // PHLightState lightTwoState = new PHLightState();
   
 //   if (millis() - time > debounce) {
 //   int next = val == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
@@ -145,21 +152,23 @@ void draw () {
 //   val = next;
 // }
 
-  checkToggles();
-  trellis.recordState();
+  // checkToggles();
+  // trellis.recordState();
   
   // THIS SOMEWHERE INSIDE SOME TIMED LOOP
   // modes[mode].update();
 
-  if (canDraw && (millis() - time > debounce) && pots[0].recordState()) {
-    int bright = (int) map(pots[0].getState(), 0, 1023, 0, 255);
-    lightOneState.setBrightness(bright);
-    lightTwoState.setBrightness(bright);
+  if (canDraw && ((millis() - time) > debounce)) {
+    field.update();
+    field.send();
+    // int bright = (int) map(pots[0].getState(), 0, 1023, 0, 255);
+    // lightOneState.setBrightness(bright);
+    // lightTwoState.setBrightness(bright);
 
-    ctrl.updateLight(0, lightOneState);
-    ctrl.updateLight(1, lightTwoState);
+    // ctrl.updateLight(0, lightOneState);
+    // ctrl.updateLight(1, lightTwoState);
     
-    tellThem();
+    // tellThem();
     time = millis();
   }
 
