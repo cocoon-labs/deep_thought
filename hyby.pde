@@ -20,8 +20,7 @@ public class Hyby {
       lights[i].setBrightness(globalBrightness);
     }
     anyChange = true;
-    ship();
-    
+    // ship();
   }
 
   public void setTopColor(float[] c) {
@@ -38,8 +37,8 @@ public class Hyby {
 
   public void ship() {
     if (anyChange) {
-      ctrl.updateLight(topId, lights[0]);
-      ctrl.updateLight(botId, lights[1]);
+      ctrl.updateLight(0, topId, lights[0]);
+      ctrl.updateLight(0, botId, lights[1]);
       for (int i = 0; i < nBulbs; i++) {
         lights[i] = new PHLightState();
       }

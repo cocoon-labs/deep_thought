@@ -9,6 +9,7 @@ public class GradientWipe extends Mode {
       hybys[i].setTopColor(wheel.getColor(0, 255));
       hybys[i].setBottomColor(wheel.getColor(128, 255));
     }
+    dt.setChandoColor(wheel.getColor(0, 255));
     wheel.turn(16);
   }
 }

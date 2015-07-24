@@ -1,11 +1,18 @@
 public class Controller {
-  String bridgeIP = "192.168.2.200";
-  String bridgeUname = "newdeveloper";
+  String hybyBridgeIP = "192.168.2.200";
+  String deepThoughtBridgeIP = "192.168.2.234";
+  String hybyBridgeUname = "newdeveloper";
+  String deepThoughtBridgeUname = "2be6d1f789c9c5f4e087e72569e46f";
   PHHueSDK phHueSDK = PHHueSDK.getInstance();
-  PHAccessPoint accessPoint = new PHAccessPoint();
+  PHAccessPoint hybyAccessPoint = new PHAccessPoint();
+  PHAccessPoint deepThoughtAccessPoint = new PHAccessPoint();
+  
   PHBridge bridge;
   PHBridgeResourcesCache cache; 
-  List<PHLight> allLights;
+  PHBridge[] bridges = new PHBridge[2];
+  List<PHLight> allLightsTmp;
+  PHLight[] allLights = new PHLight[1];
+  PHLight[][] lights = new PHLight[2][];
   
   
   // Local SDK Listener
@@ -28,19 +35,30 @@ public class Controller {
 
         @Override
         public void onBridgeConnected(PHBridge b) {
-            println("got a bridge");
             phHueSDK.setSelectedBridge(b);
+            
             phHueSDK.enableHeartbeat(b, PHHueSDK.HB_INTERVAL);
             bridge = phHueSDK.getSelectedBridge();
             cache = bridge.getResourceCache();
-            allLights = cache.getAllLights();
-            Collections.sort(allLights, new Comparator<PHLight>() {
+            allLightsTmp = cache.getAllLights();
+            Collections.sort(allLightsTmp, new Comparator<PHLight>() {
                 public int compare(PHLight o1, PHLight o2) {
                   return o1.getIdentifier().compareTo(o2.getIdentifier());
                 }
               });
+            allLights = allLightsTmp.toArray(allLights);
+            if (allLights.length == 4) {
+              bridges[0] =  b;
+              lights[0] = allLights;
+            } else {
+              bridges[1] = b;
+              lights[1] =  allLights;
+            }
 
-            canDraw = true;
+            if (bridges[0] != null && bridges[1] != null) {
+              println("Both bridges discovered. Ready to Paint the HybyCozo Red.");
+              canDraw = true;
+            }
             // Here it is recommended to set your connected bridge in your sdk object (as above) and start the heartbeat.
             // At this point you are connected to a bridge so you should pass control to your main program/activity.
             // Also it is recommended you store the connected IP Address/ Username in your app here.  This will allow easy automatic connection on subsequent use. 
@@ -79,13 +97,20 @@ public class Controller {
     phHueSDK.getNotificationManager()
       .registerSDKListener(listener);
     println("listener registered");
-    accessPoint.setIpAddress(bridgeIP);
-    accessPoint.setUsername(bridgeUname);
-    phHueSDK.connect(accessPoint);
+    hybyAccessPoint.setIpAddress(hybyBridgeIP);
+    hybyAccessPoint.setUsername(hybyBridgeUname);
+    phHueSDK.connect(hybyAccessPoint);
+
+    deepThoughtAccessPoint.setIpAddress(deepThoughtBridgeIP);
+    deepThoughtAccessPoint.setUsername(deepThoughtBridgeUname);
+    phHueSDK.connect(deepThoughtAccessPoint);
+    
   }
   
-  public void updateLight(int n, PHLightState lightState) {
-    bridge.updateLightState(allLights.get(n), lightState);
+  public void updateLight(int bridgeIdx, int lightIdx, PHLightState lightState) {
+    allLights = lights[bridgeIdx];
+    bridge = bridges[bridgeIdx];
+    bridge.updateLightState(allLights[lightIdx], lightState);
   }
   
 }

@@ -29,6 +29,7 @@ class Field {
     for (int i = 0; i < nHybys; i++) {
       hybys[i].ship();
     }
+    dt.ship();
   }
 
   public void update() {

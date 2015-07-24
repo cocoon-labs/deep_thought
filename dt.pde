@@ -3,7 +3,8 @@ class DeepThought {
   PHLightState[] lights = new PHLightState[10];
   int[] chandoIds = new int[] {0, 1, 2, 3, 4};
   int[] rimIds = new int[] {5, 6, 7, 8, 9};
-  int nBulbs = 5;
+  int nChandoBulbs = 1;
+  int nRimBulbs = 0;
   Controller ctrl;
   ColorWheel wheel;
   boolean anyChandoChange = false;
@@ -12,7 +13,7 @@ class DeepThought {
   public DeepThought(Controller ctrl, ColorWheel wheel) {
     this.ctrl = ctrl;
     this.wheel = wheel;
-    for (int i = 0; i < nBulbs; i++) {
+    for (int i = 0; i < 10; i++) {
       lights[i] = new PHLightState();
       lights[i].setBrightness(globalBrightness);
     }
@@ -26,7 +27,7 @@ class DeepThought {
 
   public void setChandoColor(float[] c) {
     anyChandoChange = true;
-    for (int i = 0; i < nBulbs; i++) {
+    for (int i = 0; i < nChandoBulbs; i++) {
       lights[chandoIds[i]].setX(c[0]);
       lights[chandoIds[i]].setY(c[1]);
     }
@@ -34,7 +35,7 @@ class DeepThought {
 
   public void setRimColor(float[] c) {
     anyRimChange = true;
-    for (int i = 0; i < nBulbs; i++) {
+    for (int i = 0; i < nRimBulbs; i++) {
       lights[rimIds[i]].setX(c[0]);
       lights[rimIds[i]].setY(c[1]);
     }
@@ -52,10 +53,15 @@ class DeepThought {
     lights[rimIds[idx]].setY(c[1]);
   }
 
+  public void ship() {
+    shipChando();
+    shipRim();
+  }
+
   public void shipChando() {
     if (anyChandoChange) {
-      for (int i = 0; i < nBulbs; i++) {
-        ctrl.updateLight(chandoIds[i], lights[chandoIds[i]]);
+      for (int i = 0; i < nChandoBulbs; i++) {
+        ctrl.updateLight(1, chandoIds[i], lights[chandoIds[i]]);
         lights[chandoIds[i]] = new PHLightState();
       }
     }
@@ -64,8 +70,8 @@ class DeepThought {
 
   public void shipRim() {
     if (anyRimChange) {
-      for (int i = 0; i < nBulbs; i++) {
-        ctrl.updateLight(rimIds[i], lights[rimIds[i]]);
+      for (int i = 0; i < nRimBulbs; i++) {
+        ctrl.updateLight(1, rimIds[i], lights[rimIds[i]]);
         lights[rimIds[i]] = new PHLightState();
       }
     }
