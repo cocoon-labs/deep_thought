@@ -5,8 +5,11 @@ class Field {
   ColorWheel wheel;
   int nHybys;
   int nModes = 1;
+  int nToggleModes = 5;
   Mode[] modes = new Mode[nModes];
+  Mode[] toggleModes = new Mode[nToggleModes];
   int mode = 0;
+  boolean dc_mode = false;
   Controller ctrl;
 
   Field(int chance, Controller ctrl) {
@@ -23,6 +26,9 @@ class Field {
     dt = new DeepThought(ctrl, wheel);
 
     modes[0] = new GradientWipe(hybys, dt, wheel, 0.99, chance);
+    
+    toggleModes[2] = new DirectControl(hybys, dt, wheel, 0.99, chance);
+
   }
 
   public void send() {
@@ -33,7 +39,11 @@ class Field {
   }
 
   public void update() {
-    modes[mode].advance();
+    if (dc_mode) {
+      toggleModes[T_DC].advance();
+    } else {
+      modes[mode].advance();
+    }
   }
   
 }

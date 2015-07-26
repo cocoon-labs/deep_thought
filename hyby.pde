@@ -1,4 +1,4 @@
-public class Hyby {
+public class Hyby implements Sculpture{
 
   PHLightState[] lights = new PHLightState[2];
   int topId, botId;
@@ -28,11 +28,21 @@ public class Hyby {
     lights[0].setX(c[0]);
     lights[0].setY(c[1]);
   }
+  
+  public void setTopBrightness(int bright) {
+    anyChange = true;
+    lights[0].setBrightness(bright);
+  }
 
   public void setBottomColor(float[] c) {
     anyChange = true;
     lights[1].setX(c[0]);
     lights[1].setY(c[1]);
+  }
+
+  public void setBottomBrightness(int bright) {
+    anyChange = true;
+    lights[1].setBrightness(bright);
   }
 
   public void ship() {

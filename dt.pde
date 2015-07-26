@@ -1,4 +1,4 @@
-class DeepThought {
+public class DeepThought implements Sculpture {
 
   PHLightState[] lights = new PHLightState[10];
   int[] chandoIds = new int[] {0, 1, 2, 3, 4};
@@ -25,7 +25,7 @@ class DeepThought {
     // shipRim();
   }
 
-  public void setChandoColor(float[] c) {
+  public void setTopColor(float[] c) {
     anyChandoChange = true;
     for (int i = 0; i < nChandoBulbs; i++) {
       lights[chandoIds[i]].setX(c[0]);
@@ -33,11 +33,25 @@ class DeepThought {
     }
   }
 
-  public void setRimColor(float[] c) {
+  public void setTopBrightness(int bright) {
+    anyChandoChange = true;
+    for (int i = 0; i < nChandoBulbs; i++) {
+      lights[chandoIds[i]].setBrightness(bright);
+    }
+  }
+
+  public void setBottomColor(float[] c) {
     anyRimChange = true;
     for (int i = 0; i < nRimBulbs; i++) {
       lights[rimIds[i]].setX(c[0]);
       lights[rimIds[i]].setY(c[1]);
+    }
+  }
+
+  public void setBottomBrightness(int bright) {
+    anyRimChange = true;
+    for (int i = 0; i < nChandoBulbs; i++) {
+      lights[rimIds[i]].setBrightness(bright);
     }
   }
 

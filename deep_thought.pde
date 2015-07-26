@@ -241,10 +241,10 @@ void checkToggles() {
     trellisModeChanged = true;
   }
   if (toggles[T_WC].recordState()) {
-    
+    trellisModeChanged = true;
   }
   if (toggles[T_DC].recordState()) {
-    trellisModeChanged = true;
+    field.dc_mode = true;
   }
   if (toggles[T_ARCADE].recordState()) {
     trellisModeChanged = true;
