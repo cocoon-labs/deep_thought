@@ -40,4 +40,8 @@ public class Mode {
     // do stuff
   }
   
+  public void reset() {
+    // set defaults? possible option to go with mode preset selection via trellis
+  }
+  
 }

@@ -4,12 +4,15 @@ public abstract class InputDevice {
   protected int state;
   protected int reading;
   protected boolean digital;
+  int xPos, yPos;
 
-  public InputDevice(int pin, boolean digital) {
+  public InputDevice(int pin, boolean digital, int xPos, int yPos) {
     this.digital = digital;
     arduino.pinMode(pin, Arduino.INPUT);
     dataPin = pin;
     recordState();
+    this.xPos = xPos;
+    this.yPos = yPos;
   }
 
   public boolean recordState() {
@@ -26,5 +29,9 @@ public abstract class InputDevice {
 
   public int getState() {
     return state;
+  }
+  
+  void draw() {
+    
   }
 }

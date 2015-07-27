@@ -6,8 +6,11 @@ public class Joystick {
   private int[] dataPins;
   private int[] state;
   private int[] reading;
+  
+  int x, y;
+  int radius = 20;
 
-  public Joystick(int up, int down, int left, int right) {
+  public Joystick(int up, int down, int left, int right, int x, int y) {
     
     arduino.pinMode(up, Arduino.INPUT);
     arduino.pinMode(down, Arduino.INPUT);
@@ -24,6 +27,9 @@ public class Joystick {
     reading = new int[dataPins.length];
     state = new int[dataPins.length];
     recordState();
+    
+    this.x = x;
+    this.y = y;
   }
 
   public boolean recordState() {
@@ -61,5 +67,34 @@ public class Joystick {
       result = R;
     }
     return result;
+  }
+  
+  void draw() {
+    pushMatrix();
+    translate(x, y);
+    ellipseMode(RADIUS);
+    fill(255);
+    ellipse(0, 0, radius, radius);
+    float angle;
+    boolean off = false;
+    if (state[0] != 0 && state[1] != 0 && state[2] != 0 && state[3] != 0) {
+      fill(0);
+      ellipse (0, 0, radius/2, radius/2);
+    } else {
+      if (state[0] == 0) {
+        if (state[2] == 0) angle = -PI/4;
+        else if (state[3] == 0) angle = PI/4;
+        else angle = 0;
+      } else if (state[1] == 0) {
+        if (state[2] == 0) angle = -3 * PI/4;
+        else if (state[3] == 0) angle = 3 * PI/4;
+        else angle = PI;
+      } else if (state[2] == 0) angle = -PI/2;
+      else angle = PI/2;
+      rotate(angle);
+      fill(255, 0, 0);
+      ellipse (0, -radius/2, radius/2, radius/2);
+    }
+    popMatrix();
   }
 }

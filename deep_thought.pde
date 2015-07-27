@@ -32,17 +32,17 @@ import cc.arduino.*;
 import oscP5.*;
 import netP5.*;
 
+import java.awt.Color;
+import java.util.Random;
+
 Arduino arduino;
 Trellis trellis;
-Toggle[] toggles;
-Joystick[] joysticks;
-Pot[] pots;
-Fader[] faders;
-Pulse pulse;
-Proximity prox;
+Panel panel;
 
 boolean changed = false;
 int globalBrightness = 0;
+PImage bgImage, panelImage;
+int bgOffset = 60;
 
 // Toggle references
 int T_PRESETS = 0;
@@ -79,7 +79,8 @@ int[] modeOptions = new int[] {5}; // 5 is just a place holder for now
 int nColorPresets = 0;
 int nModePresets = 0;
 
-ColorWheel wheel = new ColorWheel();
+ColorWheel wheel;
+Random rand;
 
 // OSC Stuff
 OscP5 oscP5;
@@ -89,6 +90,15 @@ int myListeningPort = 5001;
 int myBroadcastPort = 12000;
 
 void setup() {
+  //size(screenSize, screenSize);
+  //background(0);
+  rand = new Random();
+  bgImage = loadImage("hybycozo.jpg");
+  panelImage = loadImage("panel.jpg");
+  size(bgImage.width, bgImage.height + panelImage.height - 160);
+  ellipseMode(RADIUS);
+  
+  wheel = new ColorWheel();
     time = millis();
     ctrl = new Controller();
     // TODO: maybe set up the heartbeat if it seems relevant.
@@ -97,7 +107,7 @@ void setup() {
     // for raspi
     arduino = new Arduino (this, Arduino.list()[0], 57600);
     
-    println(Serial.list());
+    //println(Serial.list());
     // THIS WILL PROBABLY HAVE TO BE MODIFIED
     // TO CONNECT WITH THE RIGHT SERIAL PORT
     // Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
@@ -105,32 +115,11 @@ void setup() {
 
     // for macbook
     // arduino = new Arduino (this, Arduino.list()[2], 57600);
-
-    toggles = new Toggle[] {
-      new Toggle(22), new Toggle(24), new Toggle(26),
-      new Toggle(28), new Toggle(30)
-    };
-
-    joysticks = new Joystick[] {
-      new Joystick(32, 35, 36, 38), new Joystick(40, 42, 46, 48),
-      new Joystick(31, 33, 35, 37), new Joystick(39, 41, 43, 45),
-      new Joystick(47, 49, 51, 53)
-    };
-
-    pots = new Pot[] {
-      new Pot(0), new Pot(1), new Pot(2), new Pot(3), new Pot(4),
-      new Pot(5), new Pot(6), new Pot(7), new Pot(8), new Pot(9)
-    };
-
-    faders = new Fader[] {
-      new Fader(10), new Fader(11), new Fader(12), new Fader(13), new Fader(14)
-    };
-
-    pulse = new Pulse(15);
-    prox = new Proximity(49);
-
+    
     // This causes firmata to wake up, for some reason. Needed for PI.
     arduino.pinMode(13, Arduino.OUTPUT);
+    
+    panel = new Panel();
 
     oscP5 = new OscP5(this, myListeningPort);
 
@@ -139,7 +128,7 @@ void setup() {
     
     // trellis.updateMode();
 
-    field = new Field(500, ctrl);
+    field = new Field(500, ctrl, wheel);
     
 }
 
@@ -154,12 +143,11 @@ void draw () {
 //   val = next;
 // }
 
-  // checkToggles();
+  // panel.checkToggles();
   // trellis.recordState();
   
-  // THIS SOMEWHERE INSIDE SOME TIMED LOOP
-  // modes[mode].update();
-
+  panel.check();
+  
   if (canDraw && ((millis() - time) > debounce)) {
     field.update();
     field.send();
@@ -173,6 +161,10 @@ void draw () {
     // tellThem();
     time = millis();
   }
+  
+  image(bgImage, 0, -bgOffset);
+  field.draw();
+  panel.draw();
 
   // if (canDraw && switches_changed()) {
   //   // cycle through some hues for the two connected lights.
@@ -227,52 +219,13 @@ void draw () {
 //     jl_reading == Arduino.LOW || jr_reading == Arduino.LOW;
 // }
 
-void tellThem() {
-  print("sending osc");
-  OscMessage message;
-  message = new OscMessage("/pot/0");
-  message.add(pots[0].getState());
-  oscP5.send(message, myRemoteLocation);
-}
-
-void checkToggles() {
-  boolean trellisModeChanged = false;
-  if (toggles[T_PRESETS].recordState()) {
-    trellisModeChanged = true;
-  }
-  if (toggles[T_WC].recordState()) {
-    
-  }
-  if (toggles[T_DC].recordState()) {
-    trellisModeChanged = true;
-  }
-  if (toggles[T_ARCADE].recordState()) {
-    trellisModeChanged = true;
-  }
-  if (toggles[T_DEST].recordState()) {
-    trellisModeChanged = true;
-  }
-  if (trellisModeChanged) {
-    trellis.updateMode();
-  }
-}
-
-// Called when color preset is selected via Trellis
-void selectColorPreset(int c) {
-  wheel.setPreset(c);
-}
-
-// Called when mode preset is selected via Trellis
-void selectModePreset(int m) {
-  // mode = m;
-  // modes[mode].setDefault();
-  // OR SOMETHING LIKE THAT
-}
-
-void selectModeOption(int optionSelected) {
-  // modes[mode].setOption(optionSelected);
-  // OR SOMETHING LIKE THAT
-}
+//void tellThem() {
+//  print("sending osc");
+//  OscMessage message;
+//  message = new OscMessage("/pot/0");
+//  message.add(pots[0].getState());
+//  oscP5.send(message, myRemoteLocation);
+//}
 
 // void stop() {
 //     OscMessage message;

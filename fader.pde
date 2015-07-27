@@ -1,7 +1,18 @@
 public class Fader extends InputDevice {
-   
-  public Fader(int pin) {
-    super(pin, false);
+  
+  int h = 5;
+  int w = 15;
+  // x,y references the bottom point. fader is 56 pixels long.
+  
+  public Fader(int pin, int x, int y) {
+    super(pin, false, x, y);
   }
-
+  
+  void draw() {
+    rectMode(CENTER);
+    float val = map(state, 0, 1023, 0, 1);
+    int actualY = (int) (yPos - 56 * val);
+    fill(0);
+    rect(xPos, actualY, w, h);
+  }
 }

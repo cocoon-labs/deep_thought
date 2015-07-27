@@ -3,26 +3,37 @@ class Field {
   Hyby[] hybys;
   DeepThought dt;
   ColorWheel wheel;
-  int nHybys;
+  int nHybys = 2;
+  int maxHybys = 4;
   int nModes = 1;
   Mode[] modes = new Mode[nModes];
   int mode = 0;
   Controller ctrl;
+  
+  // [hybys 0-3][top / bottom][x / y] 
+  int[][][] hybyLightPositions = { { { 177, 373 }, { 179, 493 } },
+                                   { { 376, 368 }, { 383, 454 } },
+                                   { { 846, 368 }, { 843, 456 } },
+                                   { { 1054, 388 }, { 1053, 496 } } };
+  
+  // [dt top / bottom][index clockwise from left][x / y]
+  int[][][] dtLightPositions = { { {566, 291}, {582, 271}, {617, 270}, {655, 280}, {661, 309} },
+                                 { {560, 434}, {568, 420}, {594, 418}, {623, 422}, {655, 439} } };
 
-  Field(int chance, Controller ctrl) {
+  Field(int chance, Controller ctrl, ColorWheel wheel) {
     this.ctrl = ctrl;
-    nHybys = 2;
-    hybys = new Hyby[nHybys];
-    wheel = new ColorWheel();
-    wheel.setPreset(7);
+    hybys = new Hyby[maxHybys];
+    this.wheel = wheel;
+    //wheel.setPreset(2);
 
-    for (int i = 0; i < nHybys; i++) {
-      hybys[i] = new Hyby(i, ctrl, wheel, new int[] {i * 2, i * 2 + 1});
+    for (int i = 0; i < maxHybys; i++) {
+      hybys[i] = new Hyby(i, ctrl, wheel, new int[] {i * 2, i * 2 + 1}, hybyLightPositions[i]);
     }
 
-    dt = new DeepThought(ctrl, wheel);
+    dt = new DeepThought(ctrl, wheel, dtLightPositions);
 
-    modes[0] = new GradientWipe(hybys, dt, wheel, 0.99, chance);
+    //modes[0] = new GradientWipe(hybys, dt, wheel, 0.99, chance);
+    modes[0] = new HueWipe(hybys, dt, wheel, 0.99, chance);
   }
 
   public void send() {
@@ -34,6 +45,18 @@ class Field {
 
   public void update() {
     modes[mode].advance();
+  }
+  
+  public void setMode(int m) {
+    mode = m % nModes;
+    modes[mode].reset();
+  }
+  
+  public void draw() {
+    for (int i = 0; i < maxHybys; i++) {
+      hybys[i].draw(i);
+    }
+    dt.draw();
   }
   
 }
