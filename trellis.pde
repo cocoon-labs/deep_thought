@@ -28,13 +28,13 @@ public class Trellis {
   }
 
   void determineMode() {
-    if (toggles[T_DEST].getState() != 0) {
+    if (panel.toggles[T_DEST].getState() != 0) {
       mode = SCREENSAVER;
-    } else if (toggles[T_DC].getState() != 0) {
+    } else if (panel.toggles[T_DC].getState() != 0) {
       mode = SCREENSAVER;
-    } else if (toggles[T_ARCADE].getState() != 0) {
+    } else if (panel.toggles[T_ARCADE].getState() != 0) {
       mode = ARCADE;
-    } else if (toggles[T_PRESETS].getState() != 0) {
+    } else if (panel.toggles[T_PRESETS].getState() != 0) {
       mode = PRESETS;
     } else {
       mode = SPECS;
@@ -76,5 +76,20 @@ public class Trellis {
       }
     }
     return false;
+  }
+  
+  // Called when color preset is selected via Trellis
+  void selectColorPreset(int c) {
+    wheel.setPreset(c);
+  }
+  
+  // Called when mode preset is selected via Trellis
+  void selectModePreset(int m) {
+    field.setMode(m);
+  }
+  
+  void selectModeOption(int optionSelected) {
+    // field.setModeOption(optionSelected);
+    // OR SOMETHING LIKE THAT
   }
 }

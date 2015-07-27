@@ -34,7 +34,7 @@ public class Controller {
         }
 
         @Override
-        public void onBridgeConnected(PHBridge b) {
+        public void onBridgeConnected(PHBridge b, String username) {
             phHueSDK.setSelectedBridge(b);
             
             phHueSDK.enableHeartbeat(b, PHHueSDK.HB_INTERVAL);

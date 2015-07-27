@@ -1,7 +1,8 @@
 class ColorWheel {
   
   int wheelPos = 0;
-  int nColors = 256;
+  int nColors = 1500;
+  int vibe = 2;
   
   // THIS WILL PROBABLY TOTALLY CHANGE
   // NOT EVEN SURE HOW COLOR WHEEL WILL BE REPRESENTED
@@ -26,8 +27,6 @@ class ColorWheel {
     newScheme();
   }
   
-  // DOES NOT HAVE TO BE MODULO 256!
-  // nColors DEPENDS ON HOW WHEEL IS DEFINED
   void turn(int step) {
     wheelPos = (wheelPos + step) % nColors;
   }
@@ -39,7 +38,7 @@ class ColorWheel {
 
   float[] getColor(int offset, int brightness, int[][] colors) {
     int schemeN = colors.length;
-    int dist = 255 / schemeN;
+    int dist = nColors / schemeN;
     int[] c = new int[3];
     int position = (wheelPos + offset) % nColors;
     
@@ -78,7 +77,20 @@ class ColorWheel {
   }
 
   void newScheme() {
-    // GENERATE NEW SCHEME SOMEHOW
+    switch(vibe) {
+      case(0) : // DEFAULT
+        genScheme(128);
+        break;
+      case(1) : // WARM
+        genScheme(280, 420);
+        break;
+      case(2) : // COOL
+        genScheme(62, 284);
+        break;
+      case(3) : // WHITE
+        genSchemeWhite();
+        break;
+    }
   }
   
   void setPreset(int preset) {
@@ -137,6 +149,106 @@ class ColorWheel {
     float[] xy = new float[2];
     xy[0] = x;
     xy[1] = y;
+    
     return xy;
+  }
+  
+  // Returns HSB-based color value
+  float[] getHSB(int offset, int brightness) {
+    int[] rgb = getRGBColor(offset, brightness);
+    float[] hsb = Color.RGBtoHSB(rgb[0], rgb[1], rgb[2], null);
+    hsb[2] = map(hsb[2], 0, 255, 0, brightness);
+    return hsb;
+  }
+  
+  int[] getRGBColor(int offset, int brightness) {
+    return getRGBColor(offset, brightness, scheme);
+  }
+
+  int[] getRGBColor(int offset, int brightness, int[][] colors) {
+    int schemeN = colors.length;
+    int dist = nColors / schemeN;
+    int[] c = new int[3];
+    int position = (wheelPos + offset) % nColors;
+    
+    for (int i = 0; i < schemeN; i++) {
+      if (position < (i + 1) * dist) {
+        c = genColor(position, i, colors, dist);
+        c = applyBrightness(c, brightness);
+        return c;
+      }
+    }
+    c = genColor(position, schemeN - 1, colors, dist);
+    c = applyBrightness(c, brightness);
+    return c;
+  }
+  
+  public void genScheme(int colorThreshold) {
+    scheme[0] = getRGBColor(0, 255);
+    int[] newColor = scheme[0];
+    while (euclideanDistance(scheme[0], newColor) < colorThreshold) {
+      newColor = randColor();
+    }
+    scheme[1] = newColor;
+      
+    while (euclideanDistance(scheme[0], newColor) < colorThreshold ||
+           euclideanDistance(scheme[1], newColor) < colorThreshold) {
+      newColor = randColor();
+    }
+    scheme[2] = newColor;
+    
+    wheelPos = 0;
+  }
+  
+  public void genScheme(int minHue, int maxHue) {
+    minHue = (minHue + 360) % 360;
+    maxHue = maxHue % 360;
+    scheme[0] = randColor(minHue, maxHue);
+    scheme[1] = randColor(minHue, maxHue);
+    scheme[2] = randColor(minHue, maxHue);
+    
+    wheelPos = 0;
+  }
+  
+  public void genSchemeWhite() {
+    scheme[0] = new int[] {255, 255, 255};
+    scheme[1] = new int[] {255, 255, 255};
+    scheme[2] = new int[] {255, 255, 255};
+  }
+  
+  private int[] randColor() {
+    return new int[] { rand.nextInt(256), rand.nextInt(256), rand.nextInt(256) };
+  }
+  
+  private int[] randColor(int minHue, int maxHue) {
+    minHue = (minHue + 360) % 360;
+    maxHue = maxHue % 360;
+    int[] c = new int[] { rand.nextInt(256), rand.nextInt(256), rand.nextInt(256) };
+    int hue = getHue(c);
+    if (minHue > maxHue) {
+      while(hue > maxHue && hue < minHue) {
+        c = new int[] { rand.nextInt(256), rand.nextInt(256), rand.nextInt(256) };
+        hue = getHue(c);
+      }
+    } else {
+      while(hue < minHue || hue > maxHue) {
+        c = new int[] { rand.nextInt(256), rand.nextInt(256), rand.nextInt(256) };
+        hue = getHue(c);
+      }
+    }
+    return c;
+  }
+  
+  private int getHue(int[] c) {
+    float[] hsb = Color.RGBtoHSB(c[0], c[1], c[2], null);
+    return (int) (360 * hsb[0]);
+  }
+  
+  private double euclideanDistance(int[] c1, int[] c2) {
+    double sumOfCubes = 
+      Math.pow(Math.abs(c2[0] - c1[0]), 3) +
+      Math.pow(Math.abs(c2[1] - c1[1]), 3) +
+      Math.pow(Math.abs(c2[2] - c1[2]), 3);
+    return  Math.pow(sumOfCubes, 1.0/3);
   }
 }
