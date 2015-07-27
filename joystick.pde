@@ -6,6 +6,8 @@ public class Joystick {
   private int[] dataPins;
   private int[] state;
   private int[] reading;
+  public boolean stateChanged;
+  
   
   int x, y;
   int radius = 20;
@@ -39,6 +41,7 @@ public class Joystick {
       result = result || (reading[i] != state[i]);
       state[i] = reading[i];
     }
+    stateChanged = result;
     return result;
   }
 

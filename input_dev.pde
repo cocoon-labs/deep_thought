@@ -4,6 +4,7 @@ public abstract class InputDevice {
   protected int state;
   protected int reading;
   protected boolean digital;
+  public boolean stateChanged = false;
   int xPos, yPos;
 
   public InputDevice(int pin, boolean digital, int xPos, int yPos) {
@@ -24,6 +25,7 @@ public abstract class InputDevice {
     }
     result = reading != state;
     state = reading;
+    stateChanged = result;
     return result;
   }
 

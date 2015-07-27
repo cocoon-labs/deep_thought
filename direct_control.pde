@@ -35,7 +35,7 @@ public class DirectControl extends Mode {
       }
 
       js = panel.joysticks[i];
-      if (js.recordState()) {
+      if (js.stateChanged) {
         direction = js.getDirection();
         if (direction == js.UL) {
           incTopWP(i, obj, 1);
@@ -62,10 +62,10 @@ public class DirectControl extends Mode {
 
       pTop = panel.pots[i*2];
       pBot = panel.pots[i*2+1];
-      if (pTop.recordState()) {
+      if (pTop.stateChanged) {
         obj.setTopBrightness((int) map(pTop.getState(), 0, 1023, 0, 255));
       }
-      if (pBot.recordState()) {
+      if (pBot.stateChanged) {
         obj.setBottomBrightness((int) map(pTop.getState(), 0, 1023, 0, 255));
       }
     }

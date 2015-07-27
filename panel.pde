@@ -36,8 +36,12 @@ class Panel {
   
   void check() {
     
-    //checkToggles();
+    checkToggles();
     checkJoysticks();
+    checkPots();
+    checkFaders();
+    checkPulse();
+    checkProx();
     
   }
   
@@ -67,6 +71,26 @@ class Panel {
     for (int i = 0; i < joysticks.length; i++) {
       joysticks[i].recordState();
     }
+  }
+  
+  void checkPots() {
+    for (int i = 0; i < pots.length; i++) {
+      pots[i].recordState();
+    }
+  }
+
+  void checkFaders() {
+    for (int i = 0; i < faders.length; i++) {
+      faders[i].recordState();
+    }
+  }
+
+  void checkPulse() {
+    pulse.recordState();
+  }
+
+  void checkProx() {
+    prox.recordState();
   }
   
   void draw() {
