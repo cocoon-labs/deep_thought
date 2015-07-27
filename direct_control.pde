@@ -11,14 +11,14 @@ public class DirectControl extends Mode {
     super(hybys, dt, wheel, fadeFactor, chance);
     for (int i = 0; i < nHybys; i++) {
       objWP[i] = new int[] {0, 0};
-      objBright[i] = new int[] {pots[i*2].getState(), pots[i*2+1].getState()};
+      objBright[i] = new int[] {panel.pots[i*2].getState(), panel.pots[i*2+1].getState()};
       if (i < nHybys) {
         obj = hybys[i];
       } else {
         obj = dt;
       }
-      obj.setTopColor(wheel.getColor(objWP[i][0], 255));
-      obj.setBottomColor(wheel.getColor(objWP[i][1], 255));
+      obj.setTopColor(wheel.getHSB(objWP[i][0], 255));
+      obj.setBottomColor(wheel.getHSB(objWP[i][1], 255));
       obj.setTopBrightness(objBright[i][0]);
       obj.setBottomBrightness(objBright[i][1]);
     }
@@ -34,7 +34,7 @@ public class DirectControl extends Mode {
         obj = dt;
       }
 
-      js = joysticks[i];
+      js = panel.joysticks[i];
       if (js.recordState()) {
         direction = js.getDirection();
         if (direction == js.UL) {
@@ -60,8 +60,8 @@ public class DirectControl extends Mode {
         }
       }
 
-      pTop = pots[i*2];
-      pBot = pots[i*2+1];
+      pTop = panel.pots[i*2];
+      pBot = panel.pots[i*2+1];
       if (pTop.recordState()) {
         obj.setTopBrightness((int) map(pTop.getState(), 0, 1023, 0, 255));
       }
@@ -73,12 +73,12 @@ public class DirectControl extends Mode {
 
   public void incTopWP(int idx, Sculpture obj, int dir) {
     objWP[idx][0] += (dir * step);
-    obj.setTopColor(wheel.getColor(objWP[idx][0], 255));
+    obj.setTopColor(wheel.getHSB(objWP[idx][0], 255));
   }
 
   public void incBotWP(int idx, Sculpture obj, int dir) {
     objWP[idx][1] += (dir * step);
-    obj.setBottomColor(wheel.getColor(objWP[idx][1], 255));
+    obj.setBottomColor(wheel.getHSB(objWP[idx][1], 255));
   }
 
   public void incTopBright(int idx, Sculpture obj, int dir) {

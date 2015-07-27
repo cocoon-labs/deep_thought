@@ -12,8 +12,8 @@ public class HueWipe extends Mode {
       hybys[i].setTopColor(wheel.getHSB(wheel.nColors * i / field.maxHybys / 4, 255));
       hybys[i].setBottomColor(wheel.getHSB(wheel.nColors / 2 + wheel.nColors * i / field.maxHybys / 4, 255));
     }
-    dt.setChandoColor(wheel.getHSB(0, 255));
-    dt.setRimColor(wheel.getHSB(wheel.nColors / 2, 255));
+    dt.setTopColor(wheel.getHSB(0, 255));
+    dt.setBottomColor(wheel.getHSB(wheel.nColors / 2, 255));
     wheel.turn(speed);
     
     if (rand.nextInt(100) == 0) {
