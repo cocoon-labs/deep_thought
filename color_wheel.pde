@@ -85,6 +85,7 @@ class ColorWheel {
   }
   
   void setPreset(int preset) {
+    preset = preset % presets.length;
     scheme[0] = presets[preset][0];
     scheme[1] = presets[preset][1];
     scheme[2] = presets[preset][2];
