@@ -116,6 +116,7 @@ void setup() {
     matrix = new Matrix();
     
     panel.check();
+    delay(1000);
     trellis.init();
     field.updateVibe();
     
@@ -151,13 +152,11 @@ void draw () {
     time = millis();
   }
   
-  // image(bgImage, 0, -bgOffset);
-  // field.draw();
-  // panel.draw();
+  image(bgImage, 0, -bgOffset);
+  field.draw();
+  panel.draw();
 
   matrix.update();
-
-
 
 }
 

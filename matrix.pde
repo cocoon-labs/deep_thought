@@ -14,19 +14,22 @@ public class Matrix {
   int ARCADE = 5;
   int MINDFUCK = 6;
   
-  int mode = 0;
+  int redundancy = 2;
+  
+  int mode = COLOR_PRESETS;
   int prev_mode = -1;
 
   public Matrix() {
     mode = 0;
     update();
+    determineMode();
+    updateMode();
   }
 
   public void update() {
     for (int i = 0; i < panel.toggles.length; i++) {
       if (panel.toggles[i].stateChanged) {
         determineMode();
-        panel.toggles[i].stateChanged = !panel.toggles[i].stateChanged;
       }
     }
     if (mode != prev_mode) {
@@ -70,10 +73,12 @@ public class Matrix {
   }
 
   public void updateMode() {
-    OscMessage message;
-    message = new OscMessage("/mode");
-    message.add(mode);
-    oscP5.send(message, myRemoteLocation);
+    for (int i = 0; i < redundancy; i++) {
+      OscMessage message;
+      message = new OscMessage("/mode");
+      message.add(mode);
+      oscP5.send(message, myRemoteLocation);
+    }
   }
 
   public void sendColor(float[] c) {
