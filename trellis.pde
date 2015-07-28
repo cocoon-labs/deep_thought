@@ -1,14 +1,16 @@
 public class Trellis {
   
+  int nColorPresets = 0;
+  int nModePresets = 0;
+  
+  public boolean stateChanged = false;
+  
   // general mode options
   int mode;
   int SCREENSAVER = 0;
-  int PRESETS = 1;
-  int SPECS = 2;
+  int MODES = 1;
+  int COLORS = 2;
   int ARCADE = 3;
-  
-  // specific mode options
-  int specsMode;
   
   // serial tags
   int SWITCHMODE = 0;
@@ -19,63 +21,85 @@ public class Trellis {
   
   public Trellis(Serial port) {
     this.port = port;
-    updateMode();
+    port.clear();
   }
   
-  void updateMode() {
+  void init() {
     determineMode();
     sendMode();
   }
-
-  void determineMode() {
-    if (panel.toggles[T_DEST].getState() != 0) {
-      mode = SCREENSAVER;
-    } else if (panel.toggles[T_DC].getState() != 0) {
-      mode = SCREENSAVER;
-    } else if (panel.toggles[T_ARCADE].getState() != 0) {
-      mode = ARCADE;
-    } else if (panel.toggles[T_PRESETS].getState() != 0) {
-      mode = PRESETS;
-    } else {
-      mode = SPECS;
+  
+  void check() {
+    checkToggles();
+    recordState();
+  }
+  
+  void checkToggles() {
+    boolean changed = false;
+    if (panel.toggles[T_PRESETS].stateChanged ||
+        panel.toggles[T_DC].stateChanged ||
+        panel.toggles[T_ARCADE].stateChanged ||
+        panel.toggles[T_DEST].stateChanged) {
+      updateMode();
     }
+  }
+  
+  void updateMode() {
+    if (determineMode()) sendMode();
+  }
+
+  boolean determineMode() {
+    int newMode = mode;
+    if (panel.toggles[T_DEST].getState() == Arduino.HIGH) {
+      newMode = SCREENSAVER;
+    } else if (panel.toggles[T_DC].getState() == Arduino.HIGH) {
+      newMode = SCREENSAVER;
+    } else if (panel.toggles[T_ARCADE].getState() == Arduino.HIGH) {
+      newMode = ARCADE;
+    } else if (panel.toggles[T_PRESETS].getState() == Arduino.HIGH) {
+      newMode = MODES;
+    } else {
+      newMode = COLORS;
+    }
+    boolean modeChanged = mode != newMode;
+    mode = newMode;
+    return modeChanged;
   }
   
   void sendMode() {
     port.write(SWITCHMODE);
     port.write(mode);
-    if (mode == PRESETS) {
-      port.write(nColorPresets);
-      port.write(nModePresets);
-    } else if (mode == SPECS) {
-      port.write(modeOptions[mode]);
+    if (mode == MODES) {
+      port.write(field.modes.length);
+    } else if (mode == COLORS) {
+      port.write(wheel.presets.length);
     }
   }
   
   boolean recordState() {
+    boolean result = false;
     if (mode == ARCADE) {
       if (port.available() > 0) {
         int inByte = port.read();
         
         // DO STUFF
-        return true;
+        result = true;
       }
-    } else if (mode == PRESETS) {
-      if (port.available() > 1) {
-        int presetType = port.read();
-        int presetSelected = port.read();
-        if (presetType == COLORPRESET) selectColorPreset(presetSelected);
-        else if (presetType == MODEPRESET) selectModePreset(presetSelected);
-        return true;
-      }
-    } else if (mode == SPECS) {
+    } else if (mode == MODES) {
       if (port.available() > 0) {
-        int optionSelected = port.read();
-        selectModeOption(optionSelected);
-        return true;
+        int modeSelected = port.read();
+        selectModePreset(modeSelected);
+        result = true;
+      }
+    } else if (mode == COLORS) {
+      if (port.available() > 0) {
+        int colorSelected = port.read();
+        selectColorPreset(colorSelected);
+        result = true;
       }
     }
-    return false;
+    stateChanged = result;
+    return result;
   }
   
   // Called when color preset is selected via Trellis

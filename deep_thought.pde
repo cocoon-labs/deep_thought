@@ -65,20 +65,6 @@ int[] brightnesses = new int[] {0, 128};
 int js_bright = brightnesses[0];
 int js_hue = hues[0];
 
-// Lighting mode stuff
-// nModes = number of lighting modes
-// mode = ID of lighting mode currently selected
-// modes[mode] = actual lighting mode currently selected
-// modeOptions[mode] = how many specific options to display on Trellis for given mode
-// ... then lighting modes. CIRCLE is just an example name, i.e. circles through wheel.
-// int nModes = 0;
-// int mode = CIRCLE;
-// Mode[] modes = new Modes[nModes];
-int[] modeOptions = new int[] {5}; // 5 is just a place holder for now
-// int CIRCLE = 0;
-int nColorPresets = 0;
-int nModePresets = 0;
-
 ColorWheel wheel;
 Random rand;
 
@@ -105,13 +91,8 @@ void setup() {
 
     println(Arduino.list());
     // for raspi
-    arduino = new Arduino (this, Arduino.list()[0], 57600);
     
-    //println(Serial.list());
-    // THIS WILL PROBABLY HAVE TO BE MODIFIED
-    // TO CONNECT WITH THE RIGHT SERIAL PORT
-    // Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
-    // trellis = new Trellis(trellisPort);
+    arduino = new Arduino (this, Arduino.list()[1], 57600);
 
     // for macbook
     // arduino = new Arduino (this, Arduino.list()[2], 57600);
@@ -120,15 +101,19 @@ void setup() {
     arduino.pinMode(13, Arduino.OUTPUT);
     
     panel = new Panel();
+    Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
+    trellis = new Trellis(trellisPort);
 
     oscP5 = new OscP5(this, myListeningPort);
 
     // set the remote location to be the dt_matrix raspberry pi
     myRemoteLocation = new NetAddress("192.168.2.122", 5005);
-    
-    // trellis.updateMode();
 
     field = new Field(500, ctrl, wheel);
+    
+    panel.check();
+    trellis.init();
+    field.updateVibe();
     
 }
 

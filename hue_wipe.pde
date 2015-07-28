@@ -15,9 +15,6 @@ public class HueWipe extends Mode {
     dt.setTopColor(wheel.getHSB(0, 255));
     dt.setBottomColor(wheel.getHSB(wheel.nColors / 2, 255));
     wheel.turn(speed);
-    
-    if (rand.nextInt(100) == 0) {
-      wheel.newScheme();
-    }
+    println("updated color");
   }
 }

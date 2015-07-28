@@ -9,7 +9,7 @@ public class Proximity extends InputDevice {
   void draw() {
     
     ellipseMode(RADIUS);
-    if (state == 0) fill(255);
+    if (state == Arduino.LOW) fill(255);
     else fill(255, 0, 0);
     ellipse(xPos, yPos, radius, radius);
     

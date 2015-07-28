@@ -10,7 +10,7 @@ class Panel {
   Panel() {
     
     toggles = new Toggle[] {
-      new Toggle(22, 690, 792), new Toggle(24, 706, 792), new Toggle(26, 722, 792),
+      new Toggle(22, 690, 792), new Toggle(23, 706, 792), new Toggle(26, 722, 792),
       new Toggle(28, 738, 792), new Toggle(30, 754, 792)
     };
 
@@ -42,28 +42,13 @@ class Panel {
     checkFaders();
     checkPulse();
     checkProx();
+    trellis.check();
     
   }
   
   void checkToggles() {
-    boolean trellisModeChanged = false;
-    if (toggles[T_PRESETS].recordState()) {
-      trellisModeChanged = true;
-    }
-    if (toggles[T_WC].recordState()) {
-      
-    }
-    if (toggles[T_DC].recordState()) {
-      trellisModeChanged = true;
-    }
-    if (toggles[T_ARCADE].recordState()) {
-      trellisModeChanged = true;
-    }
-    if (toggles[T_DEST].recordState()) {
-      trellisModeChanged = true;
-    }
-    if (trellisModeChanged) {
-      trellis.updateMode();
+    for (int i = 0; i < toggles.length; i++) {
+      toggles[i].recordState();
     }
   }
   

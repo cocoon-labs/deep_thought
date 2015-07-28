@@ -80,19 +80,19 @@ public class Joystick {
     ellipse(0, 0, radius, radius);
     float angle;
     boolean off = false;
-    if (state[0] != 0 && state[1] != 0 && state[2] != 0 && state[3] != 0) {
+    if (state[0] == Arduino.HIGH && state[1] == Arduino.HIGH && state[2] == Arduino.HIGH && state[3] == Arduino.HIGH) {
       fill(0);
       ellipse (0, 0, radius/2, radius/2);
     } else {
-      if (state[0] == 0) {
-        if (state[2] == 0) angle = -PI/4;
-        else if (state[3] == 0) angle = PI/4;
+      if (state[0] == Arduino.LOW) {
+        if (state[2] == Arduino.LOW) angle = -PI/4;
+        else if (state[3] == Arduino.LOW) angle = PI/4;
         else angle = 0;
-      } else if (state[1] == 0) {
+      } else if (state[1] == Arduino.LOW) {
         if (state[2] == 0) angle = -3 * PI/4;
-        else if (state[3] == 0) angle = 3 * PI/4;
+        else if (state[3] == Arduino.LOW) angle = 3 * PI/4;
         else angle = PI;
-      } else if (state[2] == 0) angle = -PI/2;
+      } else if (state[2] == Arduino.LOW) angle = -PI/2;
       else angle = PI/2;
       rotate(angle);
       fill(255, 0, 0);

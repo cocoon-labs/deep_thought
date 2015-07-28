@@ -35,7 +35,6 @@ class Field {
 
     dt = new DeepThought(ctrl, wheel, dtLightPositions);
 
-    //modes[0] = new GradientWipe(hybys, dt, wheel, 0.99, chance);
     modes[0] = new HueWipe(hybys, dt, wheel, 0.99, chance);
     toggleModes[2] = new DirectControl(hybys, dt, wheel, 0.99, chance);
   }
@@ -53,6 +52,14 @@ class Field {
     } else {
       modes[mode].advance();
     }
+    if (panel.toggles[T_WC].stateChanged) {
+      updateVibe();
+    }
+  }
+  
+  public void updateVibe() {
+    if (panel.toggles[T_WC].state == Arduino.HIGH) wheel.vibe = 1;
+    else wheel.vibe = 0;
   }
   
   public void setMode(int m) {
@@ -65,6 +72,12 @@ class Field {
       hybys[i].draw(i);
     }
     dt.draw();
+  }
+  
+  public void randomize() {
+    if (rand.nextInt(100) == 0) {
+      wheel.newScheme();
+    }
   }
   
 }

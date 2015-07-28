@@ -2,12 +2,8 @@ class ColorWheel {
   
   int wheelPos = 0;
   int nColors = 1500;
-  int vibe = 2;
+  int vibe = 0;
   
-  // THIS WILL PROBABLY TOTALLY CHANGE
-  // NOT EVEN SURE HOW COLOR WHEEL WILL BE REPRESENTED
-  // BY HUE NUMBER? SOME OTHER WAY? WE SHALL SEE
-  // BUT SOME KIND OF ARRAY LIKE THIS EXISTS
   int[][][] presets = {
     { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} }, //rainblow
     { {255, 0, 0}, {177, 67, 226}, {0, 0, 255} }, // red purple blue
@@ -20,7 +16,6 @@ class ColorWheel {
     { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} } // rainbow
   };
   
-  // AGAIN, PROBABLY WON'T BE RGB BUT CURRENT SCHEME[] EXISTS IN SOME FASHION
   int[][] scheme = { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} };
   
   ColorWheel() {
@@ -80,21 +75,16 @@ class ColorWheel {
     switch(vibe) {
       case(0) : // DEFAULT
         genScheme(128);
+        // genScheme(280, 420); this is warm
+        // genScheme(62, 284); this is cool
         break;
-      case(1) : // WARM
-        genScheme(280, 420);
-        break;
-      case(2) : // COOL
-        genScheme(62, 284);
-        break;
-      case(3) : // WHITE
+      case(1) : // WHITE
         genSchemeWhite();
         break;
     }
   }
   
   void setPreset(int preset) {
-    // SOMETHING LIKE THIS
     scheme[0] = presets[preset][0];
     scheme[1] = presets[preset][1];
     scheme[2] = presets[preset][2];
