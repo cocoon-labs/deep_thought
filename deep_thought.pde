@@ -53,6 +53,8 @@ int T_DEST = 4;
 
 int time = 0;
 int debounce = 1000;
+int buttonDebounce = 200;
+int presstime = 0;
 
 boolean isOn = false;
 boolean canDraw = false;
@@ -60,6 +62,7 @@ int hue = 100;
 int bri = 0;
 Controller ctrl;
 Field field;
+Matrix matrix;
 int[] hues = new int[] {2000, 50000};
 int[] brightnesses = new int[] {0, 128};
 int js_bright = brightnesses[0];
@@ -110,6 +113,7 @@ void setup() {
     myRemoteLocation = new NetAddress("192.168.2.122", 5005);
 
     field = new Field(500, ctrl, wheel);
+    matrix = new Matrix();
     
     panel.check();
     trellis.init();
@@ -147,11 +151,40 @@ void draw () {
     time = millis();
   }
   
-  image(bgImage, 0, -bgOffset);
-  field.draw();
-  panel.draw();
+  // image(bgImage, 0, -bgOffset);
+  // field.draw();
+  // panel.draw();
+
+  matrix.update();
+
+
 
 }
+
+// public void keyPressed() {
+
+//   print("Keypressed");
+  
+//   if ((millis() - presstime) > buttonDebounce) {
+//     if (key == '1') {
+//       panel.toggles[0].stateChanged = true;
+//       panel.toggles[0].state = panel.toggles[0].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+//     } else if (key == '2') {
+//       panel.toggles[1].stateChanged = true;
+//       panel.toggles[1].state = panel.toggles[1].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+//     } else if (key == '3') {
+//       panel.toggles[2].stateChanged = true;
+//       panel.toggles[2].state = panel.toggles[2].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+//     } else if (key == '4') {
+//       panel.toggles[3].stateChanged = true;
+//       panel.toggles[3].state = panel.toggles[3].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+//     } else if (key == '5') {
+//       panel.toggles[4].stateChanged = true;
+//       panel.toggles[4].state = panel.toggles[4].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+//     }
+//     presstime = millis();
+//   }
+// }
 
 
 //void tellThem() {
@@ -162,8 +195,10 @@ void draw () {
 //  oscP5.send(message, myRemoteLocation);
 //}
 
-// void stop() {
+// void exit() {
+//   println("stopping");
 //     OscMessage message;
 //     message = new OscMessage("/quit");
 //     oscP5.send(message, myRemoteLocation);
+//     super.exit();
 // }

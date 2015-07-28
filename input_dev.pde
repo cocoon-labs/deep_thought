@@ -1,7 +1,7 @@
 public abstract class InputDevice {
   
   protected int dataPin;
-  protected int state;
+  public int state;
   protected int reading;
   protected boolean digital;
   public boolean stateChanged = false;
