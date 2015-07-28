@@ -161,30 +161,30 @@ void draw () {
 
 }
 
-// public void keyPressed() {
+public void keyPressed() {
 
-//   print("Keypressed");
+  print("Keypressed");
   
-//   if ((millis() - presstime) > buttonDebounce) {
-//     if (key == '1') {
-//       panel.toggles[0].stateChanged = true;
-//       panel.toggles[0].state = panel.toggles[0].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-//     } else if (key == '2') {
-//       panel.toggles[1].stateChanged = true;
-//       panel.toggles[1].state = panel.toggles[1].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-//     } else if (key == '3') {
-//       panel.toggles[2].stateChanged = true;
-//       panel.toggles[2].state = panel.toggles[2].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-//     } else if (key == '4') {
-//       panel.toggles[3].stateChanged = true;
-//       panel.toggles[3].state = panel.toggles[3].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-//     } else if (key == '5') {
-//       panel.toggles[4].stateChanged = true;
-//       panel.toggles[4].state = panel.toggles[4].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-//     }
-//     presstime = millis();
-//   }
-// }
+  if ((millis() - presstime) > buttonDebounce) {
+    if (key == '1') {
+      panel.toggles[0].stateChanged = true;
+      panel.toggles[0].state = panel.toggles[0].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+    } else if (key == '2') {
+      panel.toggles[1].stateChanged = true;
+      panel.toggles[1].state = panel.toggles[1].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+    } else if (key == '3') {
+      panel.toggles[2].stateChanged = true;
+      panel.toggles[2].state = panel.toggles[2].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+    } else if (key == '4') {
+      panel.toggles[3].stateChanged = true;
+      panel.toggles[3].state = panel.toggles[3].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+    } else if (key == '5') {
+      panel.toggles[4].stateChanged = true;
+      panel.toggles[4].state = panel.toggles[4].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
+    }
+    presstime = millis();
+  }
+}
 
 
 //void tellThem() {
