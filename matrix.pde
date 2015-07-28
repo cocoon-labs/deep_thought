@@ -42,19 +42,31 @@ public class Matrix {
       mode = DIRECT_CONTROL;
     } else if (panel.toggles[T_ARCADE].getState() == Arduino.HIGH) {
       mode = ARCADE;
-    } else if (panel.toggles[T_PRESETS].stateChanged) {
-      if (panel.toggles[T_PRESETS].getState() == Arduino.HIGH) {
-        mode = COLOR_PRESETS;
-      } else {
-        mode = MODE_PRESETS;
-      }
-    } else if (panel.toggles[T_WC].stateChanged) {
-      if (panel.toggles[T_WC].getState() == Arduino.HIGH) {
-        mode = WHITE_GRAD;
-      } else {
-        mode = COLOR_GRAD;
-      }
+    } else if (panel.toggles[T_PRESETS].getState() == Arduino.HIGH) {
+      mode = MODE_PRESETS;
+    } else {
+      mode = COLOR_PRESETS;
     }
+
+    // if (panel.toggles[T_DEST].getState() == Arduino.HIGH) {
+    //   mode = MINDFUCK;
+    // } else if (panel.toggles[T_DC].getState() == Arduino.HIGH) {
+    //   mode = DIRECT_CONTROL;
+    // } else if (panel.toggles[T_ARCADE].getState() == Arduino.HIGH) {
+    //   mode = ARCADE;
+    // } else if (panel.toggles[T_PRESETS].stateChanged) {
+    //   if (panel.toggles[T_PRESETS].getState() == Arduino.HIGH) {
+    //     mode = COLOR_PRESETS;
+    //   } else {
+    //     mode = MODE_PRESETS;
+    //   }
+    // } else if (panel.toggles[T_WC].stateChanged) {
+    //   if (panel.toggles[T_WC].getState() == Arduino.HIGH) {
+    //     mode = WHITE_GRAD;
+    //   } else {
+    //     mode = COLOR_GRAD;
+    //   }
+    // }
   }
 
   public void updateMode() {
