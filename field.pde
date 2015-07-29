@@ -5,13 +5,17 @@ class Field {
   ColorWheel wheel;
   int nHybys = 2;
   int maxHybys = 4;
-  int nModes = 1;
+  int nModes = 3;
   int nToggleModes = 5;
   Mode[] modes = new Mode[nModes];
   Mode[] toggleModes = new Mode[nToggleModes];
-  int mode = 0;
+  int mode = 1;
   boolean dc_mode = false;
   Controller ctrl;
+  boolean randomMode = false;
+  int chanceMode = 1000;
+  boolean randomScheme = false; 
+  int chanceScheme = 500;
   
   // [hybys 0-3][top / bottom][x / y] 
   int[][][] hybyLightPositions = { { { 177, 373 }, { 179, 493 } },
@@ -36,6 +40,8 @@ class Field {
     dt = new DeepThought(ctrl, wheel, dtLightPositions);
 
     modes[0] = new HueWipe(hybys, dt, wheel, 0.99, chance);
+    modes[1] = new ZigZagWipe(hybys, dt, wheel, 0.99, chance);
+    modes[2] = new Spin(hybys, dt, wheel, 0.99, chance);
     toggleModes[2] = new DirectControl(hybys, dt, wheel, 0.99, chance);
   }
 
@@ -47,14 +53,22 @@ class Field {
   }
 
   public void update() {
+    if (panel.toggles[T_WC].stateChanged) {
+      updateVibe();
+    }
+    if (panel.toggles[T_PRESETS].stateChanged || panel.toggles[T_DC].stateChanged) {
+      updateRandomSetting();
+    }
     if (dc_mode) {
       toggleModes[T_DC].advance();
     } else {
       modes[mode].advance();
     }
-    if (panel.toggles[T_WC].stateChanged) {
-      updateVibe();
-    }
+  }
+  
+  public void init() {
+    updateVibe();
+    updateRandomSetting();
   }
   
   public void updateVibe() {
@@ -62,9 +76,24 @@ class Field {
     else wheel.vibe = 0;
   }
   
+  public void updateRandomSetting() {
+    if (panel.toggles[T_DC].state == Arduino.LOW) {
+      if (panel.toggles[T_PRESETS].state == Arduino.HIGH) {
+       randomMode = false;
+       randomScheme = true;
+      } else {
+       randomMode = true;
+       randomScheme = false;
+      }
+    } else {
+      randomMode = false;
+      randomScheme = false;
+    }
+  }
+  
   public void setMode(int m) {
     mode = m % nModes;
-    modes[mode].reset();
+    modes[mode].setDefault();
   }
   
   public void draw() {
@@ -75,8 +104,11 @@ class Field {
   }
   
   public void randomize() {
-    if (rand.nextInt(100) == 0) {
+    if (randomScheme && rand.nextInt(chanceScheme) == 0) {
       wheel.newScheme();
+    }
+    if (randomMode && rand.nextInt(chanceMode) == 0) {
+      mode = rand.nextInt(nModes);
     }
   }
   

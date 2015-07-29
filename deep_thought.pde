@@ -78,6 +78,8 @@ NetAddressList myNetAddressList = new NetAddressList();
 int myListeningPort = 5001;
 int myBroadcastPort = 12000;
 
+boolean noSerial = false;
+
 void setup() {
   //size(screenSize, screenSize);
   //background(0);
@@ -88,15 +90,15 @@ void setup() {
   ellipseMode(RADIUS);
   
   wheel = new ColorWheel();
-    time = millis();
-    ctrl = new Controller();
-    // TODO: maybe set up the heartbeat if it seems relevant.
+  time = millis();
+  ctrl = new Controller();
+  // TODO: maybe set up the heartbeat if it seems relevant.
 
+  if (!noSerial) {
     println(Arduino.list());
     // for raspi
-    
     arduino = new Arduino (this, Arduino.list()[1], 57600);
-
+  
     // for macbook
     // arduino = new Arduino (this, Arduino.list()[2], 57600);
     
@@ -108,17 +110,22 @@ void setup() {
     trellis = new Trellis(trellisPort);
 
     oscP5 = new OscP5(this, myListeningPort);
-
+  
     // set the remote location to be the dt_matrix raspberry pi
     myRemoteLocation = new NetAddress("192.168.2.122", 5005);
-
-    field = new Field(500, ctrl, wheel);
+  }
+  
+  field = new Field(500, ctrl, wheel);
+  
+  if (!noSerial) {
     matrix = new Matrix();
     
     panel.check();
     delay(1000);
     trellis.init();
-    field.updateVibe();
+  }
+  
+  field.init();
     
 }
 

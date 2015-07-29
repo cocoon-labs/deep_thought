@@ -1,19 +1,30 @@
 public class HueWipe extends Mode {
   
-  int speed = 5;
-  int hOffset;
+  // variables to link
+  int hybyStep;
+  int topBottomStep;
+  int loopStep;
+  int dtStep;
 
   public HueWipe(Hyby[] hybys, DeepThought dt, ColorWheel wheel, float fadeFactor, int chance) {
     super(hybys, dt, wheel, fadeFactor, chance);
   }
 
   public void update() {
+    super.update();
     for (int i = 0; i < field.maxHybys; i++) {
-      hybys[i].setTopColor(wheel.getHSB(wheel.nColors * i / field.maxHybys / 4, 255));
-      hybys[i].setBottomColor(wheel.getHSB(wheel.nColors / 2 + wheel.nColors * i / field.maxHybys / 4, 255));
+      hybys[i].setTopColor(wheel.getHSB(i * hybyStep, 255));
+      hybys[i].setBottomColor(wheel.getHSB(topBottomStep + i * hybyStep, 255));
     }
-    dt.setTopColor(wheel.getHSB(0, 255));
-    dt.setBottomColor(wheel.getHSB(wheel.nColors / 2, 255));
-    wheel.turn(speed);
+    dt.setTopColor(0, dtStep);
+    dt.setBottomColor(topBottomStep, dtStep);
+    wheel.turn(loopStep);
+  }
+  
+  public void setDefault() {
+    hybyStep = wheel.nColors / 16;
+    topBottomStep = wheel.nColors / 2;
+    loopStep = wheel.nColors / 300;
+    dtStep = wheel.nColors / 20;
   }
 }

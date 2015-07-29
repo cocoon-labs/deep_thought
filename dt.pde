@@ -35,12 +35,50 @@ public class DeepThought implements Sculpture {
   public void setTopColor(float[] c) {
     anyChandoChange = true;
     for (int i = 0; i < maxChandoBulbs; i++) {
-//      lights[chandoIds[i]].setX(c[0]);
-//      lights[chandoIds[i]].setY(c[1]);
       lights[chandoIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
       lights[chandoIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
       lights[chandoIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
       colors[0][i] = c;
+    }
+  }
+  
+  public void setTopColor(int wheelPos, int wheelStep) {
+    anyChandoChange = true;
+    for (int i = 0; i < maxChandoBulbs; i++) {
+      float[] c = wheel.getHSB(wheelPos + i * wheelStep, 255);
+      lights[chandoIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+      lights[chandoIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+      lights[chandoIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+      colors[0][i] = c;
+    }
+  }
+  
+  public void setZZColor(int wheelPos, int neighborStep, int topBottomStep) {
+    anyChandoChange = true;
+    anyRimChange = true;
+    for (int i = 0; i < maxChandoBulbs; i++) {
+      float[] c;
+      if (i % 2 == 0) {
+        c = wheel.getHSB(wheelPos + i * neighborStep, 255);
+      } else {
+        c = wheel.getHSB(wheelPos + topBottomStep + i * neighborStep, 255);
+      }
+      lights[chandoIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+      lights[chandoIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+      lights[chandoIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+      colors[0][i] = c;
+    }
+    for (int i = 0; i < maxRimBulbs; i++) {
+      float[] c;
+      if (i % 2 != 0) {
+        c = wheel.getHSB(wheelPos + i * neighborStep, 255);
+      } else {
+        c = wheel.getHSB(wheelPos + topBottomStep + i * neighborStep, 255);
+      }
+      lights[rimIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+      lights[rimIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+      lights[rimIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+      colors[1][i] = c;
     }
   }
 
@@ -54,8 +92,17 @@ public class DeepThought implements Sculpture {
   public void setBottomColor(float[] c) {
     anyRimChange = true;
     for (int i = 0; i < maxRimBulbs; i++) {
-//      lights[rimIds[i]].setX(c[0]);
-//      lights[rimIds[i]].setY(c[1]);
+      lights[rimIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+      lights[rimIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+      lights[rimIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+      colors[1][i] = c;
+    }
+  }
+  
+  public void setBottomColor(int wheelPos, int wheelStep) {
+    anyRimChange = true;
+    for (int i = 0; i < maxRimBulbs; i++) {
+      float[] c = wheel.getHSB(wheelPos + i * wheelStep, 255);
       lights[rimIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
       lights[rimIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
       lights[rimIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
@@ -72,14 +119,18 @@ public class DeepThought implements Sculpture {
 
   public void setChandoColorByIndex(float[] c, int idx) {
     anyChandoChange = true;
-    lights[chandoIds[idx]].setX(c[0]);
-    lights[chandoIds[idx]].setY(c[1]);
+    lights[chandoIds[idx]].setHue((int) map(c[0], 0, 1, 0, 65280));
+    lights[chandoIds[idx]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+    lights[chandoIds[idx]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+    colors[0][idx] = c;
   }
 
   public void setRimColorByIndex(float[] c, int idx) {
     anyRimChange = true;
-    lights[rimIds[idx]].setX(c[0]);
-    lights[rimIds[idx]].setY(c[1]);
+    lights[rimIds[idx]].setHue((int) map(c[0], 0, 1, 0, 65280));
+    lights[rimIds[idx]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+    lights[rimIds[idx]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+    colors[1][idx] = c;
   }
 
   public void ship() {
@@ -123,6 +174,68 @@ public class DeepThought implements Sculpture {
       int b = rgb & 0xFF;
       fill(r, g, b);
       ellipse(lightsXY[1][i][0], lightsXY[1][i][1] - bgOffset, lightSize, lightSize);
+    }
+  }
+  
+  void rotateChando(boolean dir) {
+    anyChandoChange = true;
+    if (dir) {
+      float[] firstC = new float[] {colors[0][0][0], colors[0][0][1], colors[0][0][2]};
+      for (int i = 0; i < maxRimBulbs - 1; i++) {
+        float[] c = new float[] {colors[0][i+1][0], colors[0][i+1][1], colors[0][i+1][2]};
+        lights[chandoIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+        lights[chandoIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+        lights[chandoIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+        colors[0][i] = c;
+      }
+      lights[chandoIds[maxRimBulbs - 1]].setHue((int) map(firstC[0], 0, 1, 0, 65280));
+      lights[chandoIds[maxRimBulbs - 1]].setSaturation((int) map(firstC[1], 0, 1, 0, 254));
+      lights[chandoIds[maxRimBulbs - 1]].setBrightness((int) map(firstC[2], 0, 1, 1, 254));
+      colors[0][maxRimBulbs - 1] = firstC;
+    } else {
+      float[] lastC = new float[] {colors[0][maxRimBulbs - 1][0], colors[0][maxRimBulbs - 1][1], colors[0][maxRimBulbs - 1][2]};
+      for (int i = maxRimBulbs - 1; i > 0; i--) {
+        float[] c = new float[] {colors[0][i-1][0], colors[0][i-1][1], colors[0][i-1][2]};
+        lights[chandoIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+        lights[chandoIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+        lights[chandoIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+        colors[0][i] = c;
+      }
+      lights[chandoIds[0]].setHue((int) map(lastC[0], 0, 1, 0, 65280));
+      lights[chandoIds[0]].setSaturation((int) map(lastC[1], 0, 1, 0, 254));
+      lights[chandoIds[0]].setBrightness((int) map(lastC[2], 0, 1, 1, 254));
+      colors[0][0] = lastC;
+    }
+  }
+  
+  void rotateRim(boolean dir) {
+    anyRimChange = true;
+    if (dir) {
+      float[] firstC = new float[] {colors[1][0][0], colors[1][0][1], colors[1][0][2]};
+      for (int i = 0; i < maxRimBulbs - 1; i++) {
+        float[] c = new float[] {colors[1][i+1][0], colors[1][i+1][1], colors[1][i+1][2]};
+        lights[rimIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+        lights[rimIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+        lights[rimIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+        colors[1][i] = c;
+      }
+      lights[rimIds[maxRimBulbs - 1]].setHue((int) map(firstC[0], 0, 1, 0, 65280));
+      lights[rimIds[maxRimBulbs - 1]].setSaturation((int) map(firstC[1], 0, 1, 0, 254));
+      lights[rimIds[maxRimBulbs - 1]].setBrightness((int) map(firstC[2], 0, 1, 1, 254));
+      colors[1][maxRimBulbs - 1] = firstC;
+    } else {
+      float[] lastC = new float[] {colors[1][maxRimBulbs - 1][0], colors[1][maxRimBulbs - 1][1], colors[1][maxRimBulbs - 1][2]};
+      for (int i = maxRimBulbs - 1; i > 0; i--) {
+        float[] c = new float[] {colors[1][i-1][0], colors[1][i-1][1], colors[1][i-1][2]};
+        lights[rimIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
+        lights[rimIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
+        lights[rimIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
+        colors[1][i] = c;
+      }
+      lights[rimIds[0]].setHue((int) map(lastC[0], 0, 1, 0, 65280));
+      lights[rimIds[0]].setSaturation((int) map(lastC[1], 0, 1, 0, 254));
+      lights[rimIds[0]].setBrightness((int) map(lastC[2], 0, 1, 1, 254));
+      colors[1][0] = lastC;
     }
   }
 }
