@@ -6,6 +6,7 @@ class Panel {
   Fader[] faders;
   Pulse pulse;
   Proximity prox;
+  CoinAcceptor coin;
 
   Panel() {
     
@@ -31,24 +32,47 @@ class Panel {
 
     pulse = new Pulse(15, 433, 716);
     prox = new Proximity(49, 875, 899);
+    coin = new CoinAcceptor(2, 10, 0, 0);
     
   }
   
   void check() {
     
-    checkToggles();
+    // checkToggles();
+    checkToggles(1);
     checkJoysticks();
     checkPots();
     checkFaders();
     checkPulse();
     checkProx();
-    trellis.check();
+    checkCoin();
+    // trellis.check();
     
   }
-  
+
   void checkToggles() {
     for (int i = 0; i < toggles.length; i++) {
       toggles[i].recordState();
+    }
+  }
+  
+  /* Mapped toggles to keyboard.
+     1-5 toggle on
+     a-e toggle off
+  */
+  void checkToggles(int q) {
+    for (int i = 0; i < toggles.length; i++) {
+      if (key - '1' == i) {
+        if (toggles[i].getState() == Arduino.LOW) {
+          toggles[i].stateChanged = true;
+        }
+        toggles[i].state = Arduino.HIGH;
+      } else if (key - 'a' == i) {
+        if (toggles[i].getState() == Arduino.HIGH) {
+          toggles[i].stateChanged = true;
+        }
+        toggles[i].state = Arduino.LOW;
+      }
     }
   }
   
@@ -76,6 +100,10 @@ class Panel {
 
   void checkProx() {
     prox.recordState();
+  }
+
+  void checkCoin() {
+    coin.recordState();
   }
   
   void draw() {

@@ -15,6 +15,9 @@ public abstract class InputDevice {
     this.xPos = xPos;
     this.yPos = yPos;
   }
+  
+  public InputDevice() {
+  }
 
   public boolean recordState() {
     boolean result = false;
