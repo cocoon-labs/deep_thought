@@ -5,11 +5,11 @@ class Field {
   ColorWheel wheel;
   int nHybys = 2;
   int maxHybys = 4;
-  int nModes = 3;
+  int nModes = 6;
   int nToggleModes = 5;
   Mode[] modes = new Mode[nModes];
   Mode[] toggleModes = new Mode[nToggleModes];
-  int mode = 1;
+  int mode = 5;
   boolean dc_mode = false;
   Controller ctrl;
   boolean randomMode = false;
@@ -31,7 +31,6 @@ class Field {
     this.ctrl = ctrl;
     hybys = new Hyby[maxHybys];
     this.wheel = wheel;
-    //wheel.setPreset(2);
 
     for (int i = 0; i < maxHybys; i++) {
       hybys[i] = new Hyby(i, ctrl, wheel, new int[] {i * 2, i * 2 + 1}, hybyLightPositions[i]);
@@ -42,6 +41,9 @@ class Field {
     modes[0] = new HueWipe(hybys, dt, wheel, 0.99, chance);
     modes[1] = new ZigZagWipe(hybys, dt, wheel, 0.99, chance);
     modes[2] = new Spin(hybys, dt, wheel, 0.99, chance);
+    modes[3] = new Leapfrog(hybys, dt, wheel, 0.99, chance);
+    modes[4] = new Sweep(hybys, dt, wheel, 0.99, chance);
+    modes[5] = new Pulsar(hybys, dt, wheel, 0.99, chance);
     toggleModes[2] = new DirectControl(hybys, dt, wheel, 0.99, chance);
   }
 

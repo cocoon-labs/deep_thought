@@ -56,6 +56,9 @@ int debounce = 1000;
 int buttonDebounce = 200;
 int presstime = 0;
 
+int delay = 1; // should range 1 - ?
+int delayCount = 0;
+
 boolean isOn = false;
 boolean canDraw = false;
 int hue = 100;
@@ -131,31 +134,11 @@ void setup() {
 
 void draw () {
 
-  // PHLightState lightOneState = new PHLightState();
-  // PHLightState lightTwoState = new PHLightState();
-  
-//   if (millis() - time > debounce) {
-//   int next = val == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-//   arduino.digitalWrite(13, next);
-//   val = next;
-// }
-
-  // panel.checkToggles();
-  // trellis.recordState();
-  
   panel.check();
   
   if (canDraw && ((millis() - time) > debounce)) {
     field.update();
     field.send();
-    // int bright = (int) map(pots[0].getState(), 0, 1023, 0, 255);
-    // lightOneState.setBrightness(bright);
-    // lightTwoState.setBrightness(bright);
-
-    // ctrl.updateLight(0, lightOneState);
-    // ctrl.updateLight(1, lightTwoState);
-    
-    // tellThem();
     time = millis();
   }
   
@@ -190,8 +173,11 @@ public void keyPressed() {
     }
     presstime = millis();
   }
+  
+  if (key == ' ') {
+    wheel.newScheme();
+  }
 }
-
 
 //void tellThem() {
 //  print("sending osc");

@@ -26,9 +26,9 @@ public class ZigZagWipe extends Mode {
   }
   
   public void setDefault() {
-    hybyStep = wheel.nColors / 16;
-    topBottomStep = wheel.nColors / 2;
-    loopStep = wheel.nColors / 300;
-    dtStep = wheel.nColors / 20;
+    hybyStep = ceil(wheel.nColors / 16);
+    topBottomStep = ceil(wheel.nColors / 2);
+    loopStep = ceil(wheel.nColors / 300);
+    dtStep = ceil(wheel.nColors / 20);
   }
 }

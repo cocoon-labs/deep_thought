@@ -16,8 +16,7 @@ public class Mode {
     this.chance = chance;
     this.nHybys = hybys.length;
     
-    //TODO: update this to include deep thought lights
-    nBulbs = hybys.length * 2;
+    nBulbs = dt.totalBulbs + nHybys * 2;
     
     setDefault();
   }
@@ -27,11 +26,14 @@ public class Mode {
   }
   
   public void advance() {
-    update();
+    if (delayCount == 0) {
+      update();
+      delayCount = (delayCount + 1) % delay;
+    } 
   }
 
   public void update() {
-    randomize();
+    randomize(); 
   }
   
   public void randomize() {
@@ -74,4 +76,59 @@ public class Mode {
     }
   }
   
+  public void setByIndex(int index, int wheelPos) {
+    index = constrain(index, 0, nBulbs - 1);
+    if (index < 4) {
+      if (index % 2 == 0) {
+        hybys[index / 2].setTopColor(wheel.getHSB(wheelPos, 255));
+      } else {
+        hybys[index / 2].setBottomColor(wheel.getHSB(wheelPos, 255));
+      }
+    } else if (index < 4 + dt.totalBulbs) {
+      index = index - 4;
+      if (index % 2 == 0) {
+        dt.setChandoColorByIndex(wheel.getHSB(0, 255), index / 2);
+      } else {
+        dt.setRimColorByIndex(wheel.getHSB(0, 255), index / 2);
+      }
+    } else {
+      index -= 4 + dt.totalBulbs;
+      if (index % 2 == 0) {
+        hybys[2 + index / 2].setTopColor(wheel.getHSB(wheelPos, 255));
+      } else {
+        hybys[2 + index / 2].setBottomColor(wheel.getHSB(wheelPos, 255));
+      }
+    }
+  }
+  
+  public void setTop(int index, int wheelPos) {
+    index = constrain(index, 0, (nBulbs / 2) - 1);
+    if (index < 2) {
+      hybys[index].setTopColor(wheel.getHSB(wheelPos, 255));
+    } else if (index < 2 + (dt.totalBulbs / 2)) {
+      index = index - 2;
+      dt.setChandoColorByIndex(wheel.getHSB(0, 255), index);
+    } else {
+      index -= (dt.totalBulbs / 2);
+      hybys[index].setTopColor(wheel.getHSB(wheelPos, 255));
+    }
+  }
+  
+  public void setBottom(int index, int wheelPos) {
+    index = constrain(index, 0, (nBulbs / 2) - 1);
+    if (index < 2) {
+      hybys[index].setBottomColor(wheel.getHSB(wheelPos, 255));
+    } else if (index < 2 + (dt.totalBulbs / 2)) {
+      index = index - 2;
+      dt.setRimColorByIndex(wheel.getHSB(0, 255), index);
+    } else {
+      index -= (dt.totalBulbs / 2);
+      hybys[index].setBottomColor(wheel.getHSB(wheelPos, 255));
+    }
+  }
+  
+  public void setTB(int index, int wheelPos) {
+    setTop(index, wheelPos);
+    setBottom(index, wheelPos);
+  }
 }

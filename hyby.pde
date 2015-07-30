@@ -28,9 +28,6 @@ public class Hyby implements Sculpture{
   }
 
   public void setTopColor(float[] c) {
-//    anyChange = true;
-//    lights[0].setX(c[0]);
-//    lights[0].setY(c[1]);
     anyChange = true;
     lights[0].setHue((int) map(c[0], 0, 1, 0, 65280));
     lights[0].setSaturation((int) map(c[1], 0, 1, 0, 254));
@@ -44,9 +41,6 @@ public class Hyby implements Sculpture{
   }
 
   public void setBottomColor(float[] c) {
-//    anyChange = true;
-//    lights[1].setX(c[0]);
-//    lights[1].setY(c[1]);
     anyChange = true;
     lights[1].setHue((int) map(c[0], 0, 1, 0, 65280));
     lights[1].setSaturation((int) map(c[1], 0, 1, 0, 254));

@@ -3,17 +3,21 @@ class ColorWheel {
   int wheelPos = 0;
   int nColors = 1500;
   int vibe = 0;
+  int minBrightness = 10;
   
   int[][][] presets = {
     { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} }, //rainblow
     { {255, 0, 0}, {177, 67, 226}, {0, 0, 255} }, // red purple blue
     { {218, 107, 44}, {240, 23, 0}, {147, 0, 131} }, // snowskirt
-    { {0, 0, 0}, {128, 0, 255}, {128, 0, 128} }, // royal
+    { {0, 0, 255}, {128, 0, 255}, {128, 0, 128} }, // royal
     { {122, 0, 255}, {0, 0, 255}, {0, 88, 205} }, // cool
-    { {0, 0, 0}, {196, 0, 255}, {209, 209, 209} }, // dork
+    { {255, 0, 196}, {196, 0, 255}, {209, 209, 209} }, // dork
     { {177, 0, 177}, {77, 17, 71}, {247, 77, 7} }, // sevens
-    { {128, 0, 255}, {0, 0, 0}, {255, 128, 0} }, // orpal
-    { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} } // rainbow
+    { {128, 0, 255}, {255, 0, 128}, {255, 128, 0} }, // orpal
+    { {255, 200, 200}, {255, 255, 255}, {200, 200, 255} }, // pink white - white - blue white
+    { {200, 200, 255}, {255, 0, 255}, {255, 200, 200} }, // blue white - purple - pink white
+    { {255, 128, 0}, {0, 0, 255}, {255, 230, 255} }, // orange - blue - white
+    { {255, 0, 0}, {255, 128, 0}, {128, 255, 0}, {0, 255, 0}, {0, 255, 128}, {0, 128, 255}, {0, 0, 255}, {128, 0, 255}, {255, 0, 128} } // rainbow detail
   };
   
   int[][] scheme = { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} };
@@ -27,27 +31,27 @@ class ColorWheel {
   }
   
   // Returns HUE-based color value (XY form)
-  float[] getColor(int offset, int brightness) {
-    return getColor(offset, brightness, scheme);
-  }
-
-  float[] getColor(int offset, int brightness, int[][] colors) {
-    int schemeN = colors.length;
-    int dist = nColors / schemeN;
-    int[] c = new int[3];
-    int position = (wheelPos + offset) % nColors;
-    
-    for (int i = 0; i < schemeN; i++) {
-      if (position < (i + 1) * dist) {
-        c = genColor(position, i, colors, dist);
-        c = applyBrightness(c, brightness);
-        return getRGBtoXY(c);
-      }
-    }
-    c = genColor(position, schemeN - 1, colors, dist);
-    c = applyBrightness(c, brightness);
-    return getRGBtoXY(c);
-  }
+//  float[] getColor(int offset, int brightness) {
+//    return getColor(offset, brightness, scheme);
+//  }
+//
+//  float[] getColor(int offset, int brightness, int[][] colors) {
+//    int schemeN = colors.length;
+//    int dist = nColors / schemeN;
+//    int[] c = new int[3];
+//    int position = (wheelPos + offset) % nColors;
+//    
+//    for (int i = 0; i < schemeN; i++) {
+//      if (position < (i + 1) * dist) {
+//        c = genColor(position, i, colors, dist);
+//        c = applyBrightness(c, brightness);
+//        return getRGBtoXY(c);
+//      }
+//    }
+//    c = genColor(position, schemeN - 1, colors, dist);
+//    c = applyBrightness(c, brightness);
+//    return getRGBtoXY(c);
+//  }
 
   private int[] genColor(int position, int idx, int[][] colors, int dist) {
     position = position - (idx * dist);
@@ -86,9 +90,11 @@ class ColorWheel {
   
   void setPreset(int preset) {
     preset = preset % presets.length;
-    scheme[0] = presets[preset][0];
-    scheme[1] = presets[preset][1];
-    scheme[2] = presets[preset][2];
+    int schemeLength = presets[preset].length;
+    scheme = new int[schemeLength][3];
+    for (int i = 0; i < schemeLength; i++) {
+      scheme[i] = presets[preset][i];
+    }
   }
 
   private float[] getRGBtoXY(int[] c) {
@@ -175,8 +181,9 @@ class ColorWheel {
   }
   
   public void genScheme(int colorThreshold) {
-    scheme[0] = getRGBColor(0, 255);
-    int[] newColor = scheme[0];
+    int[] newColor = getRGBColor(0, 255);
+    scheme = new int[3][3];
+    scheme[0] = newColor;
     while (euclideanDistance(scheme[0], newColor) < colorThreshold) {
       newColor = randColor();
     }
@@ -187,7 +194,6 @@ class ColorWheel {
       newColor = randColor();
     }
     scheme[2] = newColor;
-    
     wheelPos = 0;
   }
   
@@ -208,7 +214,11 @@ class ColorWheel {
   }
   
   private int[] randColor() {
-    return new int[] { rand.nextInt(256), rand.nextInt(256), rand.nextInt(256) };
+    int[] c = new int[] { rand.nextInt(256), rand.nextInt(256), rand.nextInt(256) };
+    if (brightness(color(c[0], c[1], c[2])) < minBrightness)
+      return randColor();
+    else
+      return c;
   }
   
   private int[] randColor(int minHue, int maxHue) {

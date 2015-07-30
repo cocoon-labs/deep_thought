@@ -9,6 +9,7 @@ public class DeepThought implements Sculpture {
   int maxChandoBulbs = 5;
   int nRimBulbs = 0;
   int maxRimBulbs = 5;
+  int totalBulbs = maxChandoBulbs + maxRimBulbs;
   Controller ctrl;
   ColorWheel wheel;
   boolean anyChandoChange = false;
