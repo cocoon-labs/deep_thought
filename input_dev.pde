@@ -26,6 +26,7 @@ public abstract class InputDevice {
     result = reading != state;
     state = reading;
     stateChanged = result;
+    if (stateChanged) sleeper.trigger();
     return result;
   }
 

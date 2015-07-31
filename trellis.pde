@@ -4,6 +4,7 @@ public class Trellis {
   int nModePresets = 0;
   
   public boolean stateChanged = false;
+  boolean isSleeping;
   
   // general mode options
   int mode;
@@ -11,17 +12,17 @@ public class Trellis {
   int MODES = 1;
   int COLORS = 2;
   int ARCADE = 3;
+  int SLEEP = 4;
   
   // serial tags
   int SWITCHMODE = 0;
-  int COLORPRESET = 1;
-  int MODEPRESET = 2;
   
   Serial port;
   
   public Trellis(Serial port) {
     this.port = port;
     port.clear();
+    wake();
   }
   
   void init() {
@@ -29,9 +30,21 @@ public class Trellis {
     sendMode();
   }
   
+  void wake() {
+    isSleeping = false;
+    init();
+  }
+  
+  void sleep() {
+    isSleeping = true;
+    clearScreen();
+  }
+  
   void check() {
-    checkToggles();
-    recordState();
+    if (!isSleeping) {
+      checkToggles();
+      recordState();
+    }
   }
   
   void checkToggles() {
@@ -100,6 +113,11 @@ public class Trellis {
     }
     stateChanged = result;
     return result;
+  }
+  
+  void clearScreen() {
+    port.write(SWITCHMODE);
+    port.write(SLEEP);
   }
   
   // Called when color preset is selected via Trellis

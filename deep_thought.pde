@@ -59,6 +59,11 @@ int presstime = 0;
 int delay = 1; // should range 1 - ?
 int delayCount = 0;
 
+// hibernation / prox sensor stuff
+Sleeper sleeper;
+int minutesUntilSleep = 0;
+int secondsUntilSleep = 10;
+
 boolean isOn = false;
 boolean canDraw = false;
 int hue = 100;
@@ -92,6 +97,7 @@ void setup() {
   size(bgImage.width, bgImage.height + panelImage.height - 160);
   ellipseMode(RADIUS);
   
+  sleeper = new Sleeper(minutesUntilSleep, secondsUntilSleep);
   wheel = new ColorWheel();
   time = millis();
   ctrl = new Controller();
@@ -142,11 +148,22 @@ void draw () {
     time = millis();
   }
   
+  if (!sleeper.isSleeping()) {
+    matrix.update();
+    if (sleeper.justWoke) {
+      trellis.wake();
+      sleeper.resetFlags();
+    }
+  } else {
+    if (sleeper.justSlept) {
+      trellis.sleep();
+      //matrix.sleep();
+      sleeper.resetFlags();
+    }
+  }
   image(bgImage, 0, -bgOffset);
   field.draw();
   panel.draw();
-
-  matrix.update();
 
 }
 
@@ -176,6 +193,8 @@ public void keyPressed() {
   
   if (key == ' ') {
     wheel.newScheme();
+  } else if (key == 's') {
+    sleeper.trigger();
   }
 }
 

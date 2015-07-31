@@ -31,6 +31,7 @@ class Panel {
 
     pulse = new Pulse(15, 433, 716);
     prox = new Proximity(49, 875, 899);
+    // distance beam
     
   }
   
@@ -42,6 +43,7 @@ class Panel {
     checkFaders();
     checkPulse();
     checkProx();
+    // check distance beam
     trellis.check();
     
   }
