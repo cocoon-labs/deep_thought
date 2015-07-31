@@ -14,7 +14,7 @@ public class Sleeper {
     hourLastTriggered = hour();
     minLastTriggered = minute();
     secLastTriggered = second();
-    if (sleeping = true) {
+    if (sleeping == true) {
       justSlept = false;
       justWoke = true;
     } else {

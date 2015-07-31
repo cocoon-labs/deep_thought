@@ -39,14 +39,14 @@ class Panel {
   
   void check() {
     
-    // checkToggles();
-    checkToggles(1);
+    checkToggles();
+    // checkToggles(1);
     checkJoysticks();
     checkPots();
     checkFaders();
     checkPulse();
     checkProx();
-    checkCoin();
+    //checkCoin();
     // check distance beam
     trellis.check();
     

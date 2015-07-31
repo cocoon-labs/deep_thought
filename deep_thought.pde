@@ -62,7 +62,7 @@ int delayCount = 0;
 // hibernation / prox sensor stuff
 Sleeper sleeper;
 int minutesUntilSleep = 0;
-int secondsUntilSleep = 10;
+int secondsUntilSleep = 30;
 
 boolean isOn = false;
 boolean canDraw = false;
@@ -106,17 +106,17 @@ void setup() {
   if (!noSerial) {
     println(Arduino.list());
     // for raspi
-    // arduino = new Arduino (this, Arduino.list()[1], 57600);
+    arduino = new Arduino (this, Arduino.list()[1], 57600);
 
     // for macbook
-    arduino = new Arduino (this, Arduino.list()[2], 57600);
+    // arduino = new Arduino (this, Arduino.list()[2], 57600);
 
     // This causes firmata to wake up, for some reason. Needed for PI.
     arduino.pinMode(13, Arduino.OUTPUT);
     
     panel = new Panel();
-    // Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
-    // trellis = new Trellis(trellisPort);
+    Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
+    trellis = new Trellis(trellisPort);
 
     oscP5 = new OscP5(this, myListeningPort);
   
@@ -131,11 +131,10 @@ void setup() {
     
     panel.check();
     delay(1000);
-    // trellis.init();
+    trellis.init();
   }
   
   field.init();
-    
 }
 
 void draw () {
@@ -144,7 +143,7 @@ void draw () {
   
   if (canDraw && ((millis() - time) > debounce)) {
     field.update();
-    // field.send();
+    field.send();
     time = millis();
   }
   
