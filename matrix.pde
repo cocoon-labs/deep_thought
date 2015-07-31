@@ -18,9 +18,14 @@ public class Matrix {
   
   int mode = COLOR_PRESETS;
   int prev_mode = -1;
-  int lastSend = millis();
+  int lastJSSend = millis();
+  int lastPotSend = millis();
+  int lastFadSend = millis();
 
-  public Matrix() {
+  ColorWheel wheel;
+
+  public Matrix(ColorWheel wheel) {
+    this.wheel = wheel;
     mode = 0;
     update();
     determineMode();
@@ -41,6 +46,31 @@ public class Matrix {
 
     if (panel.coin.getState() == Arduino.HIGH) {
       acceptCoin();
+    }
+
+    for (int i = 0; i < panel.joysticks.length; i++) {
+      if (panel.joysticks[i].stateChanged) {
+        sendJoysticks();
+        break;
+      }
+    }
+
+    for (int i = 0; i < panel.pots.length; i++) {
+      if (panel.pots[i].stateChanged) {
+        sendPots();
+        break;
+      }
+    }
+
+    for (int i = 0; i < panel.faders.length; i++) {
+      if (panel.faders[i].stateChanged) {
+        sendFaders();
+        break;
+      }
+    }
+
+    if (wheel.justChanged()) {
+      sendScheme(wheel.scheme);
     }
 
     if (key == CODED) {
@@ -89,21 +119,75 @@ public class Matrix {
 
   // TODO: update this to send all joysticks
   public void sendJoysticks(int s1, int s2) {
-    if (millis() - lastSend > 100) {
+    if (millis() - lastJSSend > 100) {
       OscMessage message;
       message = new OscMessage("/js");
       
       message.add(s1);
+      message.add(0);
+      message.add(0);
+      message.add(0);
       message.add(s2);
 
       oscP5.send(message, myRemoteLocation);
-      lastSend = millis();
+      lastJSSend = millis();
+    }
+  }
+
+  // send the actual joysticks
+  public void sendJoysticks() {
+    int tmp;
+    if (millis() - lastJSSend > 100) {
+      OscMessage jsMsg = new OscMessage("/js");
+      for (int i = 0; i < panel.joysticks.length; i++) {
+        tmp = panel.joysticks[i].getDirection();
+        if (tmp == 1 || tmp == 5 || tmp == 6) {
+          jsMsg.add(-1);
+        } else if (tmp == 2 || tmp == 7 || tmp == 8) {
+          jsMsg.add(1);
+        }
+      }
+      oscP5.send(jsMsg, myRemoteLocation);
+      lastJSSend = millis();
+    }
+  }
+  
+  public void sendPots() {
+    if (millis() - lastPotSend > 100) {
+      OscMessage potMsg = new OscMessage("/pot");
+      for (int i = 0; i < panel.pots.length; i++) {
+        potMsg.add(panel.pots[i].getState());
+      }        
+      oscP5.send(potMsg, myRemoteLocation);
+      lastPotSend = millis();
+    }
+  }
+
+  public void sendFaders() {
+    if (millis() - lastFadSend > 100) {
+      OscMessage faderMsg = new OscMessage("/fad");
+      for (int i = 0; i < panel.faders.length; i++) {
+        faderMsg.add(panel.faders[i].getState());
+      }
+      oscP5.send(faderMsg, myRemoteLocation);
+      lastFadSend = millis();
     }
   }
 
   public void acceptCoin() {
     OscMessage message;
     message = new OscMessage("/coin");
+    oscP5.send(message, myRemoteLocation);
+  }
+
+  public void sendScheme(int[][] scheme) {
+    OscMessage message;
+    message = new OscMessage("/scheme");
+    for (int i = 0; i < scheme.length; i++) {
+      for (int j = 0; j < scheme[i].length; j++) {
+        message.add(scheme[i][j]);
+      }
+    }
     oscP5.send(message, myRemoteLocation);
   }
 

@@ -106,17 +106,17 @@ void setup() {
   if (!noSerial) {
     println(Arduino.list());
     // for raspi
-    arduino = new Arduino (this, Arduino.list()[1], 57600);
-  
+    // arduino = new Arduino (this, Arduino.list()[1], 57600);
+
     // for macbook
-    // arduino = new Arduino (this, Arduino.list()[2], 57600);
-    
+    arduino = new Arduino (this, Arduino.list()[2], 57600);
+
     // This causes firmata to wake up, for some reason. Needed for PI.
     arduino.pinMode(13, Arduino.OUTPUT);
     
     panel = new Panel();
-    Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
-    trellis = new Trellis(trellisPort);
+    // Serial trellisPort = new Serial(this, Serial.list()[0], 9600);
+    // trellis = new Trellis(trellisPort);
 
     oscP5 = new OscP5(this, myListeningPort);
   
@@ -127,11 +127,11 @@ void setup() {
   field = new Field(500, ctrl, wheel);
   
   if (!noSerial) {
-    matrix = new Matrix();
+    matrix = new Matrix(wheel);
     
     panel.check();
     delay(1000);
-    trellis.init();
+    // trellis.init();
   }
   
   field.init();
@@ -144,7 +144,7 @@ void draw () {
   
   if (canDraw && ((millis() - time) > debounce)) {
     field.update();
-    field.send();
+    // field.send();
     time = millis();
   }
   
@@ -168,48 +168,9 @@ void draw () {
 }
 
 public void keyPressed() {
-
-  print("Keypressed");
-  
-  if ((millis() - presstime) > buttonDebounce) {
-    if (key == '1') {
-      panel.toggles[0].stateChanged = true;
-      panel.toggles[0].state = panel.toggles[0].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-    } else if (key == '2') {
-      panel.toggles[1].stateChanged = true;
-      panel.toggles[1].state = panel.toggles[1].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-    } else if (key == '3') {
-      panel.toggles[2].stateChanged = true;
-      panel.toggles[2].state = panel.toggles[2].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-    } else if (key == '4') {
-      panel.toggles[3].stateChanged = true;
-      panel.toggles[3].state = panel.toggles[3].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-    } else if (key == '5') {
-      panel.toggles[4].stateChanged = true;
-      panel.toggles[4].state = panel.toggles[4].state == Arduino.HIGH ? Arduino.LOW : Arduino.HIGH;
-    }
-    presstime = millis();
-  }
-  
   if (key == ' ') {
     wheel.newScheme();
   } else if (key == 's') {
     sleeper.trigger();
   }
 }
-
-//void tellThem() {
-//  print("sending osc");
-//  OscMessage message;
-//  message = new OscMessage("/pot/0");
-//  message.add(pots[0].getState());
-//  oscP5.send(message, myRemoteLocation);
-//}
-
-// void exit() {
-//   println("stopping");
-//     OscMessage message;
-//     message = new OscMessage("/quit");
-//     oscP5.send(message, myRemoteLocation);
-//     super.exit();
-// }

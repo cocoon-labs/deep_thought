@@ -4,6 +4,7 @@ class ColorWheel {
   int nColors = 1500;
   int vibe = 0;
   int minBrightness = 10;
+  boolean schemeChanged = false;
   
   int[][][] presets = {
     { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} }, //rainblow
@@ -86,6 +87,7 @@ class ColorWheel {
         genSchemeWhite();
         break;
     }
+    schemeChanged = true;
   }
   
   void setPreset(int preset) {
@@ -95,6 +97,7 @@ class ColorWheel {
     for (int i = 0; i < schemeLength; i++) {
       scheme[i] = presets[preset][i];
     }
+    schemeChanged = true;
   }
 
   private float[] getRGBtoXY(int[] c) {
@@ -211,6 +214,12 @@ class ColorWheel {
     scheme[0] = new int[] {255, 255, 255};
     scheme[1] = new int[] {255, 255, 255};
     scheme[2] = new int[] {255, 255, 255};
+  }
+
+  public boolean justChanged() {
+    boolean result = schemeChanged;
+    schemeChanged = false;
+    return result;
   }
   
   private int[] randColor() {
