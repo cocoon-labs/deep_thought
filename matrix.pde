@@ -145,6 +145,8 @@ public class Matrix {
           jsMsg.add(-1);
         } else if (tmp == 2 || tmp == 7 || tmp == 8) {
           jsMsg.add(1);
+        } else {
+          jsMsg.add(0);
         }
       }
       oscP5.send(jsMsg, myRemoteLocation);
