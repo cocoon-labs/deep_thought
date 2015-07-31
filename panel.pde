@@ -33,6 +33,7 @@ class Panel {
     pulse = new Pulse(15, 433, 716);
     prox = new Proximity(49, 875, 899);
     coin = new CoinAcceptor(2, 10, 0, 0);
+    // distance beam
     
   }
   
@@ -46,7 +47,8 @@ class Panel {
     checkPulse();
     checkProx();
     checkCoin();
-    // trellis.check();
+    // check distance beam
+    trellis.check();
     
   }
 

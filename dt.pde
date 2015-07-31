@@ -85,8 +85,10 @@ public class DeepThought implements Sculpture {
 
   public void setTopBrightness(int bright) {
     anyChandoChange = true;
+    bright = constrain(bright, 1, 254);
     for (int i = 0; i < nChandoBulbs; i++) {
       lights[chandoIds[i]].setBrightness(bright);
+      colors[0][i][2] = bright;
     }
   }
 
@@ -113,8 +115,10 @@ public class DeepThought implements Sculpture {
 
   public void setBottomBrightness(int bright) {
     anyRimChange = true;
+    bright = constrain(bright, 1, 254);
     for (int i = 0; i < nChandoBulbs; i++) {
       lights[rimIds[i]].setBrightness(bright);
+      colors[1][i][2] = bright;
     }
   }
 
@@ -184,28 +188,16 @@ public class DeepThought implements Sculpture {
       float[] firstC = new float[] {colors[0][0][0], colors[0][0][1], colors[0][0][2]};
       for (int i = 0; i < maxRimBulbs - 1; i++) {
         float[] c = new float[] {colors[0][i+1][0], colors[0][i+1][1], colors[0][i+1][2]};
-        lights[chandoIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
-        lights[chandoIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
-        lights[chandoIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
-        colors[0][i] = c;
+        setChandoColorByIndex(c, i);
       }
-      lights[chandoIds[maxRimBulbs - 1]].setHue((int) map(firstC[0], 0, 1, 0, 65280));
-      lights[chandoIds[maxRimBulbs - 1]].setSaturation((int) map(firstC[1], 0, 1, 0, 254));
-      lights[chandoIds[maxRimBulbs - 1]].setBrightness((int) map(firstC[2], 0, 1, 1, 254));
-      colors[0][maxRimBulbs - 1] = firstC;
+      setChandoColorByIndex(firstC, maxRimBulbs - 1);
     } else {
       float[] lastC = new float[] {colors[0][maxRimBulbs - 1][0], colors[0][maxRimBulbs - 1][1], colors[0][maxRimBulbs - 1][2]};
       for (int i = maxRimBulbs - 1; i > 0; i--) {
         float[] c = new float[] {colors[0][i-1][0], colors[0][i-1][1], colors[0][i-1][2]};
-        lights[chandoIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
-        lights[chandoIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
-        lights[chandoIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
-        colors[0][i] = c;
+        setChandoColorByIndex(c, i);
       }
-      lights[chandoIds[0]].setHue((int) map(lastC[0], 0, 1, 0, 65280));
-      lights[chandoIds[0]].setSaturation((int) map(lastC[1], 0, 1, 0, 254));
-      lights[chandoIds[0]].setBrightness((int) map(lastC[2], 0, 1, 1, 254));
-      colors[0][0] = lastC;
+      setChandoColorByIndex(lastC, 0);
     }
   }
   
@@ -215,28 +207,16 @@ public class DeepThought implements Sculpture {
       float[] firstC = new float[] {colors[1][0][0], colors[1][0][1], colors[1][0][2]};
       for (int i = 0; i < maxRimBulbs - 1; i++) {
         float[] c = new float[] {colors[1][i+1][0], colors[1][i+1][1], colors[1][i+1][2]};
-        lights[rimIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
-        lights[rimIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
-        lights[rimIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
-        colors[1][i] = c;
+        setRimColorByIndex(c, i);
       }
-      lights[rimIds[maxRimBulbs - 1]].setHue((int) map(firstC[0], 0, 1, 0, 65280));
-      lights[rimIds[maxRimBulbs - 1]].setSaturation((int) map(firstC[1], 0, 1, 0, 254));
-      lights[rimIds[maxRimBulbs - 1]].setBrightness((int) map(firstC[2], 0, 1, 1, 254));
-      colors[1][maxRimBulbs - 1] = firstC;
+      setRimColorByIndex(firstC, maxRimBulbs - 1);
     } else {
       float[] lastC = new float[] {colors[1][maxRimBulbs - 1][0], colors[1][maxRimBulbs - 1][1], colors[1][maxRimBulbs - 1][2]};
       for (int i = maxRimBulbs - 1; i > 0; i--) {
         float[] c = new float[] {colors[1][i-1][0], colors[1][i-1][1], colors[1][i-1][2]};
-        lights[rimIds[i]].setHue((int) map(c[0], 0, 1, 0, 65280));
-        lights[rimIds[i]].setSaturation((int) map(c[1], 0, 1, 0, 254));
-        lights[rimIds[i]].setBrightness((int) map(c[2], 0, 1, 1, 254));
-        colors[1][i] = c;
+        setRimColorByIndex(c, i);
       }
-      lights[rimIds[0]].setHue((int) map(lastC[0], 0, 1, 0, 65280));
-      lights[rimIds[0]].setSaturation((int) map(lastC[1], 0, 1, 0, 254));
-      lights[rimIds[0]].setBrightness((int) map(lastC[2], 0, 1, 1, 254));
-      colors[1][0] = lastC;
+      setRimColorByIndex(lastC, 0);
     }
   }
 }

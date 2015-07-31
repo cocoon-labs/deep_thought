@@ -37,7 +37,9 @@ public class Hyby implements Sculpture{
   
   public void setTopBrightness(int bright) {
     anyChange = true;
+    bright = constrain(bright, 1, 254);
     lights[0].setBrightness(bright);
+    colors[0][2] = bright;
   }
 
   public void setBottomColor(float[] c) {
@@ -50,7 +52,9 @@ public class Hyby implements Sculpture{
 
   public void setBottomBrightness(int bright) {
     anyChange = true;
+    bright = constrain(bright, 1, 254);
     lights[1].setBrightness(bright);
+    colors[1][2] = bright;
   }
 
   public void ship() {
