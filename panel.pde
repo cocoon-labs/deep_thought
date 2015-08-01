@@ -33,23 +33,20 @@ class Panel {
     pulse = new Pulse(15, 433, 716);
     prox = new Proximity(49, 875, 899);
     coin = new CoinAcceptor(2, 10, 0, 0);
-    // distance beam
     
   }
   
   void check() {
     
-    // checkToggles();
-    checkToggles(1);
+    checkToggles();
+    // checkToggles(1);
     checkJoysticks();
     checkPots();
     checkFaders();
     checkPulse();
     checkProx();
-    checkBeam();
     //checkCoin();
-    // check distance beam
-    // trellis.check();
+    trellis.check();
     
   }
 

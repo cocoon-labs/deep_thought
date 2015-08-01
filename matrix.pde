@@ -175,7 +175,7 @@ public class Matrix {
     if (millis() - lastBeamSend > 100) {
       OscMessage beamMsg = new OscMessage("/beam");
       beamMsg.add(trellis.beam.getState());
-      oscP5.send(beamMsg);
+      oscP5.send(beamMsg, myRemoteLocation);
       lastBeamSend = millis();
     }
   }
