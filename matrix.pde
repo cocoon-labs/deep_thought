@@ -21,13 +21,13 @@ public class Matrix {
   int lastJSSend = millis();
   int lastPotSend = millis();
   int lastFadSend = millis();
+  int lastBeamSend = millis();
 
   ColorWheel wheel;
 
   public Matrix(ColorWheel wheel) {
     this.wheel = wheel;
     mode = 0;
-//    update();
     determineMode();
     updateMode();
     prev_mode = mode;
@@ -67,6 +67,10 @@ public class Matrix {
         // sendFaders();
         break;
       }
+    }
+
+    if (trellis.beam.stateChanged) {
+      sendBeam();
     }
 
     if (wheel.justChanged()) {
@@ -164,6 +168,15 @@ public class Matrix {
       }
       oscP5.send(faderMsg, myRemoteLocation);
       lastFadSend = millis();
+    }
+  }
+
+  public void sendBeam() {
+    if (millis() - lastBeamSend > 100) {
+      OscMessage beamMsg = new OscMessage("/beam");
+      beamMsg.add(trellis.beam.getState());
+      oscP5.send(beamMsg);
+      lastBeamSend = millis();
     }
   }
 
