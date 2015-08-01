@@ -183,13 +183,11 @@ public class Matrix {
     oscP5.send(message, myRemoteLocation);
   }
 
-  public void sendColor(float[] c) {
-    OscMessage message;
-    message = new OscMessage("/color");
-    message.add(c[0]);
-    message.add(c[1]);
-    message.add(c[2]);
-    oscP5.send(message, myRemoteLocation);
+  public void sleep() {
+    println("going to sleep");
+    OscMessage message = new OscMessage("/sleep");
+    for (int i = 0; i < 3; i++) {
+      oscP5.send(message, myRemoteLocation);
+    }
   }
-
 }
