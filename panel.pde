@@ -39,8 +39,8 @@ class Panel {
   
   void check() {
     
-    // checkToggles();
-    checkToggles(1);
+    checkToggles();
+    // checkToggles(1);
     checkJoysticks();
     checkPots();
     checkFaders();
@@ -48,7 +48,7 @@ class Panel {
     checkProx();
     //checkCoin();
     // check distance beam
-    // trellis.check();z
+    trellis.check();
     
   }
 

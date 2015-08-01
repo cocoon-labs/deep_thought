@@ -55,16 +55,20 @@ class Field {
   }
 
   public void update() {
+    updateSettings();
+    if (dc_mode) {
+      toggleModes[T_DC].advance();
+    } else {
+      modes[mode].advance();
+    }
+  }
+  
+  public void updateSettings() {
     if (panel.toggles[T_WC].stateChanged) {
       updateVibe();
     }
     if (panel.toggles[T_PRESETS].stateChanged || panel.toggles[T_DC].stateChanged) {
       updateRandomSetting();
-    }
-    if (dc_mode) {
-      toggleModes[T_DC].advance();
-    } else {
-      modes[mode].advance();
     }
   }
   

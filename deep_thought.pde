@@ -62,7 +62,7 @@ int delayCount = 0;
 // hibernation / prox sensor stuff
 Sleeper sleeper;
 int minutesUntilSleep = 0;
-int secondsUntilSleep = 30;
+int secondsUntilSleep = 10;
 
 boolean isOn = false;
 boolean canDraw = false;
@@ -140,6 +140,7 @@ void setup() {
 void draw () {
 
   panel.check();
+  field.updateSettings();
   
   if (canDraw && ((millis() - time) > debounce)) {
     field.update();
@@ -151,6 +152,8 @@ void draw () {
     matrix.update();
     if (sleeper.justWoke) {
       trellis.wake();
+      matrix.determineMode();
+      matrix.updateMode();
       sleeper.resetFlags();
     }
   } else {

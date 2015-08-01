@@ -27,7 +27,7 @@ public class Matrix {
   public Matrix(ColorWheel wheel) {
     this.wheel = wheel;
     mode = 0;
-    update();
+//    update();
     determineMode();
     updateMode();
   }
