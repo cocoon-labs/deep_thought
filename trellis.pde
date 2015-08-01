@@ -93,9 +93,8 @@ public class Trellis {
     boolean result = false;
     if (mode == ARCADE) {
       if (port.available() > 0) {
-        int inByte = port.read();
-        
         // DO STUFF
+        port.clear();
         result = true;
       }
     } else if (mode == MODES) {
@@ -112,6 +111,7 @@ public class Trellis {
       }
     }
     stateChanged = result;
+    if (stateChanged) sleeper.trigger();
     return result;
   }
   
@@ -130,8 +130,4 @@ public class Trellis {
     field.setMode(m);
   }
   
-  void selectModeOption(int optionSelected) {
-    // field.setModeOption(optionSelected);
-    // OR SOMETHING LIKE THAT
-  }
 }

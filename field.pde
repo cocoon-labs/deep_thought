@@ -74,8 +74,17 @@ class Field {
   }
   
   public void updateVibe() {
-    if (panel.toggles[T_WC].state == Arduino.HIGH) wheel.vibe = 1;
-    else wheel.vibe = 0;
+    if (panel.toggles[T_WC].state == Arduino.HIGH) {
+      if (panel.toggles[T_PRESETS].state == Arduino.HIGH) {
+        wheel.setPreset(rand.nextInt(3));
+      }
+      wheel.vibe = 1;
+    } else {
+      if (panel.toggles[T_PRESETS].state == Arduino.HIGH) {
+        wheel.setPreset(rand.nextInt(wheel.presets.length - 3) + 3);
+      }
+      wheel.vibe = 0;
+    }
   }
   
   public void updateRandomSetting() {
@@ -87,9 +96,12 @@ class Field {
        randomMode = true;
        randomScheme = false;
       }
-    } else {
+    } else if (!sleeper.isSleeping()) {
       randomMode = false;
       randomScheme = false;
+    } else {
+      randomMode = true;
+      randomScheme = true;
     }
   }
   

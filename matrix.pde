@@ -50,21 +50,21 @@ public class Matrix {
 
     for (int i = 0; i < panel.joysticks.length; i++) {
       if (panel.joysticks[i].stateChanged) {
-        sendJoysticks();
+        //sendJoysticks();
         break;
       }
     }
 
     for (int i = 0; i < panel.pots.length; i++) {
       if (panel.pots[i].stateChanged) {
-        sendPots();
+        //sendPots();
         break;
       }
     }
 
     for (int i = 0; i < panel.faders.length; i++) {
       if (panel.faders[i].stateChanged) {
-        sendFaders();
+        //sendFaders();
         break;
       }
     }

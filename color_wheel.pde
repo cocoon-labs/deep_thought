@@ -6,7 +6,12 @@ class ColorWheel {
   int minBrightness = 10;
   boolean schemeChanged = false;
   
+  int[] white = new int[] {255, 255, 255};
+  
   int[][][] presets = {
+    { {255, 200, 200}, {255, 255, 255}, {200, 200, 255} }, // pink white - white - blue white
+    { {200, 200, 255}, {255, 0, 255}, {255, 200, 200} }, // blue white - purple - pink white
+    { {200, 200, 255}, {255, 125, 255}, {255, 240, 200} }, // blue white - purple - orange white
     { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} }, //rainblow
     { {255, 0, 0}, {177, 67, 226}, {0, 0, 255} }, // red purple blue
     { {218, 107, 44}, {240, 23, 0}, {147, 0, 131} }, // snowskirt
@@ -15,8 +20,6 @@ class ColorWheel {
     { {255, 0, 196}, {196, 0, 255}, {209, 209, 209} }, // dork
     { {177, 0, 177}, {77, 17, 71}, {247, 77, 7} }, // sevens
     { {128, 0, 255}, {255, 0, 128}, {255, 128, 0} }, // orpal
-    { {255, 200, 200}, {255, 255, 255}, {200, 200, 255} }, // pink white - white - blue white
-    { {200, 200, 255}, {255, 0, 255}, {255, 200, 200} }, // blue white - purple - pink white
     { {255, 128, 0}, {0, 0, 255}, {255, 230, 255} }, // orange - blue - white
     { {255, 0, 0}, {255, 128, 0}, {128, 255, 0}, {0, 255, 0}, {0, 255, 128}, {0, 128, 255}, {0, 0, 255}, {128, 0, 255}, {255, 0, 128} } // rainbow detail
   };
@@ -84,7 +87,7 @@ class ColorWheel {
         // genScheme(62, 284); this is cool
         break;
       case(1) : // WHITE
-        genSchemeWhite();
+        genSchemeWhite(100);
         break;
     }
     schemeChanged = true;
@@ -210,10 +213,21 @@ class ColorWheel {
     wheelPos = 0;
   }
   
-  public void genSchemeWhite() {
-    scheme[0] = new int[] {255, 255, 255};
-    scheme[1] = new int[] {255, 255, 255};
-    scheme[2] = new int[] {255, 255, 255};
+  public void genSchemeWhite(int whiteThreshold) {
+    int[] newColor = getRGBColor(0, 255);
+    scheme = new int[3][3];
+    scheme[0] = newColor;
+    newColor = randColor();
+    while (euclideanDistance(white, newColor) > whiteThreshold) {
+      newColor = randColor();
+    }
+    scheme[1] = newColor;
+    newColor = randColor();
+    while (euclideanDistance(white, newColor) > whiteThreshold) {
+      newColor = randColor();
+    }
+    scheme[2] = newColor;
+    wheelPos = 0;
   }
 
   public boolean justChanged() {
