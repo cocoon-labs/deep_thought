@@ -5,6 +5,7 @@ public abstract class InputDevice {
   protected int reading;
   protected boolean digital;
   public boolean stateChanged = false;
+  protected int tolerance = 5;
   int xPos, yPos;
 
   public InputDevice(int pin, boolean digital, int xPos, int yPos) {
@@ -23,11 +24,13 @@ public abstract class InputDevice {
     boolean result = false;
     if (digital) {
       reading = arduino.digitalRead(dataPin);
+      result = reading != state;
+      state = reading;
     } else {
       reading = arduino.analogRead(dataPin);
+      result = abs(reading - state) >= tolerance;
+      if (result) state = reading;
     }
-    result = reading != state;
-    state = reading;
     stateChanged = result;
     if (stateChanged) sleeper.trigger();
     return result;

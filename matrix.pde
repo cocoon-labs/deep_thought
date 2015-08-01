@@ -40,9 +40,8 @@ public class Matrix {
     }
     if (mode != prev_mode) {
       updateMode();
+      prev_mode = mode;
     }
-
-    prev_mode = mode;
 
     if (panel.coin.getState() == Arduino.HIGH) {
       acceptCoin();
@@ -50,21 +49,21 @@ public class Matrix {
 
     for (int i = 0; i < panel.joysticks.length; i++) {
       if (panel.joysticks[i].stateChanged) {
-        //sendJoysticks();
+        // sendJoysticks();
         break;
       }
     }
 
     for (int i = 0; i < panel.pots.length; i++) {
       if (panel.pots[i].stateChanged) {
-        //sendPots();
+        // sendPots();
         break;
       }
     }
 
     for (int i = 0; i < panel.faders.length; i++) {
       if (panel.faders[i].stateChanged) {
-        //sendFaders();
+        // sendFaders();
         break;
       }
     }
@@ -77,14 +76,14 @@ public class Matrix {
       int stick1 = 0;
       int stick2 = 0;
       if (keyCode == UP) {
-        stick1 = -1;
-      } else if (keyCode == DOWN) {
         stick1 = 1;
+      } else if (keyCode == DOWN) {
+        stick1 = 2;
       } 
       if (keyCode == RIGHT) {
-        stick2 = -1;
+        stick2 = 4;
       } else if (keyCode == LEFT) {
-        stick2 = 1;
+        stick2 = 3;
       }
       sendJoysticks(stick1, stick2);
       key = '9';
@@ -100,12 +99,9 @@ public class Matrix {
       mode = ARCADE;
     } else if (panel.toggles[T_PRESETS].getState() == Arduino.HIGH) {
       mode = MODE_PRESETS;
-    } else if (panel.toggles[T_WC].getState() == Arduino.HIGH) {
-      mode = WHITE_GRAD;
     } else {
       mode = COLOR_PRESETS;
     }
-
   }
 
   public void updateMode() {
@@ -141,13 +137,7 @@ public class Matrix {
       OscMessage jsMsg = new OscMessage("/js");
       for (int i = 0; i < panel.joysticks.length; i++) {
         tmp = panel.joysticks[i].getDirection();
-        if (tmp == 1 || tmp == 5 || tmp == 6) {
-          jsMsg.add(-1);
-        } else if (tmp == 2 || tmp == 7 || tmp == 8) {
-          jsMsg.add(1);
-        } else {
-          jsMsg.add(0);
-        }
+        jsMsg.add(tmp);
       }
       oscP5.send(jsMsg, myRemoteLocation);
       lastJSSend = millis();

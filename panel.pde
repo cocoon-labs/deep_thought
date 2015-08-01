@@ -39,8 +39,8 @@ class Panel {
   
   void check() {
     
-    checkToggles();
-    // checkToggles(1);
+    // checkToggles();
+    checkToggles(1);
     checkJoysticks();
     checkPots();
     checkFaders();
@@ -48,7 +48,7 @@ class Panel {
     checkProx();
     //checkCoin();
     // check distance beam
-    trellis.check();
+    // trellis.check();z
     
   }
 
@@ -64,6 +64,7 @@ class Panel {
   */
   void checkToggles(int q) {
     for (int i = 0; i < toggles.length; i++) {
+      toggles[i].stateChanged = false;
       if (key - '1' == i) {
         if (toggles[i].getState() == Arduino.LOW) {
           toggles[i].stateChanged = true;

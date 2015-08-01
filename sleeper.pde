@@ -2,7 +2,7 @@ public class Sleeper {
   
   int maxSeconds;
   int hourLastTriggered, minLastTriggered, secLastTriggered;
-  boolean sleeping = true;
+  boolean sleeping = false;
   boolean justSlept, justWoke;
   
   public Sleeper(int minutes, int seconds) {
@@ -14,7 +14,7 @@ public class Sleeper {
     hourLastTriggered = hour();
     minLastTriggered = minute();
     secLastTriggered = second();
-    if (sleeping == true) {
+    if (sleeping) {
       justSlept = false;
       justWoke = true;
     } else {
