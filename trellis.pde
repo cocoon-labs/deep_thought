@@ -16,13 +16,18 @@ public class Trellis {
   
   // serial tags
   int SWITCHMODE = 0;
+  int MODESEL = 1;
+  int COLORSEL = 2;
+  int BEAMVAL = 3;
   
   Serial port;
+  DistanceBeam beam;
   
   public Trellis(Serial port) {
     this.port = port;
     port.clear();
     wake();
+    beam = new DistanceBeam();
   }
   
   void init() {
@@ -91,27 +96,30 @@ public class Trellis {
   
   boolean recordState() {
     boolean result = false;
-    if (mode == ARCADE) {
-      if (port.available() > 0) {
-        // DO STUFF
+    if (port.available() > 0) {
+      int firstByte = port.read();
+      if (firstByte == BEAMVAL) {
+        if (port.available() > 0) {
+          beam.recordState(port.read());
+        }        
+      } else if (firstByte == MODESEL) {
+        if (port.available() > 0) {
+          int modeSelected = port.read();
+          selectModePreset(modeSelected);
+          result = true;
+        }
+      } else if (firstByte == COLORSEL) {
+        if (port.available() > 0) {
+          int colorSelected = port.read();
+          selectColorPreset(colorSelected);
+          result = true;
+        }
+      } else {
         port.clear();
-        result = true;
       }
-    } else if (mode == MODES) {
-      if (port.available() > 0) {
-        int modeSelected = port.read();
-        selectModePreset(modeSelected);
-        result = true;
-      }
-    } else if (mode == COLORS) {
-      if (port.available() > 0) {
-        int colorSelected = port.read();
-        selectColorPreset(colorSelected);
-        result = true;
-      }
+      stateChanged = result;
+      if (stateChanged) sleeper.trigger();
     }
-    stateChanged = result;
-    if (stateChanged) sleeper.trigger();
     return result;
   }
   
@@ -128,6 +136,10 @@ public class Trellis {
   // Called when mode preset is selected via Trellis
   void selectModePreset(int m) {
     field.setMode(m);
+  }
+  
+  void draw() {
+    beam.draw();
   }
   
 }

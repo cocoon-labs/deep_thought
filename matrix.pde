@@ -30,6 +30,7 @@ public class Matrix {
 //    update();
     determineMode();
     updateMode();
+    prev_mode = mode;
   }
 
   public void update() {
@@ -184,7 +185,6 @@ public class Matrix {
   }
 
   public void sleep() {
-    println("going to sleep");
     OscMessage message = new OscMessage("/sleep");
     for (int i = 0; i < 3; i++) {
       oscP5.send(message, myRemoteLocation);

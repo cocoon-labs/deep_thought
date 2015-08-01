@@ -127,9 +127,8 @@ void setup() {
   field = new Field(500, ctrl, wheel);
   
   if (!noSerial) {
-    matrix = new Matrix(wheel);
-    
     panel.check();
+    matrix = new Matrix(wheel);
     delay(1000);
     trellis.init();
   }
@@ -159,7 +158,7 @@ void draw () {
   } else {
     if (sleeper.justSlept) {
       trellis.sleep();
-      //matrix.sleep();
+      matrix.sleep();
       sleeper.resetFlags();
     }
   }

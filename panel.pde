@@ -127,6 +127,7 @@ class Panel {
     }
     pulse.draw();
     prox.draw();
+    trellis.draw();
     
   }
 
